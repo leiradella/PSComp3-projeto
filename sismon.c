@@ -93,13 +93,15 @@ void* thread_amb (void *threadinput)
         tvaramb = -1;
     }
 
-    if (ambcycle%NCICL == 0)
+    if (ambcycle/NCICL == 0)
     {
-     tfixamb = 1;       
+     tfixamb = 1; 
     }
     else 
     {
+      
      tfixamb = -1;
+      
      if (ambcycle == 2*NCICL)
         {
             ambcycle = 0;
@@ -130,6 +132,7 @@ void main ()
     }
 
 }
+
 
 
 
