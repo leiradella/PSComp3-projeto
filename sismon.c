@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <pthread.h>
-#include <time.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define NS 3 /* numero de sectores a controlar */
 #define PSEN 5 /* perıodo inicial dos processos sensores (em segundos) */
@@ -14,51 +14,50 @@
 #define NCICL 12 /* numero de ciclos para alternancia ambiente */
 #define NT 3 
 
-int TEMP = TINI;
-int tmanip;
-
-/*typedef struct Threadinputs;
-{
-    int TEMP = TINI;
+struct Threadinputs
+     {
+    int TEMP;
     int tmanip;
-} Threadinput
-*/
-void *thread_sen (void *TEMP)
+     };
+
+     struct Threadinputs threadinput;
+    
+
+void* thread_sen (void *threadinput)
 {
-    int *senbuf;
-    senbuf = (int*)TEMP;
+    struct Threadinputs *senbuf = (struct Threadinputs*)threadinput;
+
     while(1)
     {
         sleep(1);
-  if (*senbuf > TMAX)
+  if (senbuf->TEMP > TMAX)
     {
         printf("ABOVE MAX TEMPERATURE\n");
     }
 
-  if (*senbuf < TMIN)
+  if (senbuf->TEMP < TMIN)
     {
         printf("BELOW MINIMUM TEMPERATURE\n");
     }
 
-   printf("CURRENT TEMP: %i\n", *senbuf);  
+   printf("CURRENT TEMP: %i\n", senbuf->TEMP);  
     }
 }
 
-void *thread_act (void *TEMP)
+void* thread_act (void *threadinput)
 {
     int tact;
-    int *actbuf;
-    actbuf = (int*)TEMP;
-
+    struct Threadinputs *actbuf = (struct Threadinputs*)threadinput;
+    
     while(1)
     {
          sleep(1);
 
-  if (tmanip > 0)
+  if (actbuf->tmanip > 0)
     {
       tact = 1;  
     }
-  else if (tmanip < 0)
+  else if (actbuf->tmanip < 0)
     {
       tact = -1;  
     }
@@ -67,14 +66,14 @@ void *thread_act (void *TEMP)
       tact = 0;  
     }
 
-   *actbuf += tact; 
+   actbuf->TEMP += tact; 
    }
 }
 
-void *thread_amb (void *TEMP)
+void* thread_amb (void *threadinput)
 {
- int *ambbuf;
- ambbuf = (int*)TEMP;
+ struct Threadinputs *ambbuf = (struct Threadinputs*)threadinput;
+
  int tfixamb;
  int tvaramb;   
 
@@ -104,25 +103,25 @@ void *thread_amb (void *TEMP)
     }
 */
 
- *ambbuf += tfixamb + tvaramb;
+ ambbuf->TEMP += tfixamb + tvaramb;
     }
 }
 
 void main ()
 {
+     threadinput.TEMP = TINI;
     pthread_t  threads[NT];
-  //  Threadinput threadinput;
     
-    if (pthread_create(&threads[0], NULL, thread_sen, (void*)&TEMP) != 0) {
+    if (pthread_create(&threads[0], NULL, thread_sen, (void*)&threadinput) != 0) {
         printf("Erro a criar thread sensor"); }
-    if (pthread_create(&threads[1], NULL, thread_act, (void*)&TEMP) != 0) {
+    if (pthread_create(&threads[1], NULL, thread_act, (void*)&threadinput) != 0) {
         printf("Erro a criar thread atuador"); }
-    if (pthread_create(&threads[2], NULL, thread_amb, (void*)&TEMP) != 0) {
+    if (pthread_create(&threads[2], NULL, thread_amb, (void*)&threadinput) != 0) {
         printf("Erro a criar thread ambiente"); }
 
     while (1)
     { 
-       scanf("%i", &tmanip);
+       scanf("%i", &threadinput.tmanip);
     }
     
     
