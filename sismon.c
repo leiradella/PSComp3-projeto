@@ -17,14 +17,19 @@
 int TEMP = TINI;
 int tmanip;
 
-
+/*typedef struct Threadinputs;
+{
+    int TEMP = TINI;
+    int tmanip;
+} Threadinput
+*/
 void *thread_sen (void *TEMP)
 {
     int *senbuf;
     senbuf = (int*)TEMP;
     while(1)
     {
-        sleep(3);
+        sleep(1);
   if (*senbuf > TMAX)
     {
         printf("ABOVE MAX TEMPERATURE\n");
@@ -47,7 +52,7 @@ void *thread_act (void *TEMP)
 
     while(1)
     {
-         sleep(3);
+         sleep(1);
 
   if (tmanip > 0)
     {
@@ -68,7 +73,6 @@ void *thread_act (void *TEMP)
 
 void *thread_amb (void *TEMP)
 {
-     sleep(3);
  int *ambbuf;
  ambbuf = (int*)TEMP;
  int tfixamb;
@@ -76,7 +80,9 @@ void *thread_amb (void *TEMP)
 
     while (1)
     {
+      sleep(1);  
       tvaramb = rand() % 2;
+      printf("%i\n", tvaramb);
       
     if (tvaramb == 1)
     {
@@ -105,6 +111,7 @@ void *thread_amb (void *TEMP)
 void main ()
 {
     pthread_t  threads[NT];
+  //  Threadinput threadinput;
     
     if (pthread_create(&threads[0], NULL, thread_sen, (void*)&TEMP) != 0) {
         printf("Erro a criar thread sensor"); }
