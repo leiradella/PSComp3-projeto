@@ -109,7 +109,6 @@ void* thread_amb (void *threadinput)
         }   
     }
 
-printf("tfixamb is %i for cycle %i\n", tfixamb, ambcycle);
  ambbuf->TEMP += tfixamb + tvaramb;
  ambcycle++;
     }
