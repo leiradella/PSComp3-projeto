@@ -12,7 +12,7 @@
 #define TMIN -100 /* temperatura minima inicial para alarme (em graus) */
 #define TMAX +100 /* temperatura maxima inicial para alarme (em graus) */
 #define NCICL 12 /* numero de ciclos para alternancia ambiente */
-#define NT 3 
+#define NT 3   /*numero de threads*/
 
 struct Threadinputs
      {
@@ -29,7 +29,7 @@ void* thread_sen (void *threadinput)
 
     while(1)
     {
-        sleep(1);
+        sleep(PSEN);
   if (senbuf->TEMP > TMAX)
     {
         printf("ABOVE MAX TEMPERATURE\n");
@@ -51,7 +51,7 @@ void* thread_act (void *threadinput)
     
     while(1)
     {
-         sleep(1);
+         sleep(PACT);
 
   if (actbuf->tmanip > 0)
     {
@@ -75,13 +75,13 @@ void* thread_amb (void *threadinput)
  struct Threadinputs *ambbuf = (struct Threadinputs*)threadinput;
 
  int tfixamb;
- int tvaramb;   
+ int tvaramb;
+ int ambcycle;   
 
     while (1)
     {
-      sleep(1);  
+      sleep(PAMB);  
       tvaramb = rand() % 2;
-      printf("%i\n", tvaramb);
       
     if (tvaramb == 1)
     {
@@ -93,22 +93,27 @@ void* thread_amb (void *threadinput)
         tvaramb = -1;
     }
 
- /*if ()
+    if (ambcycle%NCICL == 0)
     {
      tfixamb = 1;       
     }
- else 
+    else 
     {
-     tfixamb = -1;   
+     tfixamb = -1;
+     if (ambcycle == 2*NCICL)
+        {
+            ambcycle = 0;
+        }   
     }
-*/
+
 
  ambbuf->TEMP += tfixamb + tvaramb;
+ ambcycle++;
     }
 }
 
 void main ()
-{
+{   
      threadinput.TEMP = TINI;
     pthread_t  threads[NT];
     
@@ -123,8 +128,6 @@ void main ()
     { 
        scanf("%i", &threadinput.tmanip);
     }
-    
-    
 
 }
 
