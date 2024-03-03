@@ -105,10 +105,11 @@ void* thread_amb (void *threadinput)
      if (ambcycle == 2*NCICL)
         {
             ambcycle = 0;
+            tfixamb = 1;
         }   
     }
 
-
+printf("tfixamb is %i for cycle %i\n", tfixamb, ambcycle);
  ambbuf->TEMP += tfixamb + tvaramb;
  ambcycle++;
     }
@@ -132,6 +133,7 @@ void main ()
     }
 
 }
+
 
 
 
