@@ -1,23 +1,19 @@
 #include "naosei.h" 
 
-void* thread_sen (void *threadinput1)
-{
-    struct Threadinputs *senbuf = (struct Threadinputs*)threadinput1;
+void* thread_sen(void *threadinput1) {
+    
+  struct Threadinputs senbuf = *((struct Threadinputs*)threadinput1);
 
     while(1)
     {
-        sleep(PSEN);
-  if (senbuf->TEMP > TMAX)
-    {
-        printf("ABOVE MAX TEMPERATURE\n");
-    }
+      sleep(PSEN);
+        if (senbuf.TEMP > TMAX) {  
+          printf("ABOVE MAX TEMPERATURE\n"); }
 
-  if (senbuf->TEMP < TMIN)
-    {
-        printf("BELOW MINIMUM TEMPERATURE\n");
-    }
+        if (senbuf.TEMP < TMIN) {
+          printf("BELOW MINIMUM TEMPERATURE\n"); }
 
-   printf("CURRENT TEMP: %i\n", senbuf->TEMP);  
+    printf("CURRENT TEMP: %i\n",senbuf.TEMP); 
     }
 }
 
@@ -89,4 +85,4 @@ void* thread_amb (void *threadinput1)
  ambbuf->TEMP += tfixamb + tvaramb;
  ambcycle++;
     }
-}
+} 
