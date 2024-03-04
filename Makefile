@@ -2,7 +2,7 @@
 CC = gcc
 
 #compiler flags
-CFLAGS = -Wall -g
+CFLAGS = -Wall -g -pthread
 
 #source files
 SRC = sismon.c naosei.c
