@@ -1,8 +1,8 @@
 #include "naosei.h" 
 
-void* thread_sen (void *threadinput)
+void* thread_sen (void *threadinput1)
 {
-    struct Threadinputs *senbuf = (struct Threadinputs*)threadinput;
+    struct Threadinputs *senbuf = (struct Threadinputs*)threadinput1;
 
     while(1)
     {
@@ -21,10 +21,10 @@ void* thread_sen (void *threadinput)
     }
 }
 
-void* thread_act (void *threadinput)
+void* thread_act (void *threadinput1)
 {
     int tact;
-    struct Threadinputs *actbuf = (struct Threadinputs*)threadinput;
+    struct Threadinputs *actbuf = (struct Threadinputs*)threadinput1;
     
     while(1)
     {
@@ -47,9 +47,9 @@ void* thread_act (void *threadinput)
    }
 }
 
-void* thread_amb (void *threadinput)
+void* thread_amb (void *threadinput1)
 {
- struct Threadinputs *ambbuf = (struct Threadinputs*)threadinput;
+ struct Threadinputs *ambbuf = (struct Threadinputs*)threadinput1;
 
  int tfixamb;
  int tvaramb;
