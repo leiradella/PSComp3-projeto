@@ -1,33 +1,10 @@
-/***************************************************************************
-| File: monitor.c
-|
-| Autor: Carlos Almeida (IST), from work by Jose Rufino (IST/INESC), 
-|        from an original by Leendert Van Doorn
-| Data:  Nov 2002
-***************************************************************************/
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
 
-/*-------------------------------------------------------------------------+
-| Headers of command functions
-+--------------------------------------------------------------------------*/ 
 extern void cmd_sair (int, char** );
-extern void cmd_cts (int, char** );
-extern void cmd_cps (int, char** );
-extern void cmd_mpps (int, char** );
-extern void cmd_mppa (int, char** );
-extern void cmd_mppamb (int, char** );
-extern void cmd_aas (int, char** );
-extern void cmd_cala (int, char** );
-extern void cmd_dala (int, char** );
-extern void cmd_cer (int, char** );
-extern void cmd_aer (int, char** );
-extern void cmd_der (int, char** );
-extern void cmd_tsm (int, char** );
-extern void cmd_lreg (int, char** );
-extern void cmd_trh (int, char** );
+extern void cmd_test (int, char** );
        void cmd_sos  (int, char** );
 
 /*-------------------------------------------------------------------------+
@@ -40,26 +17,10 @@ struct 	command_d {
   void  (*cmd_fnct)(int, char**);
   char*	cmd_name;
   char*	cmd_help;
-} 
-  const commands[] = 
-{
-  {cmd_sos,    "sos","             help"},
-  {cmd_sair,   "sair","            sair"},
-  {cmd_cts,    "cts","s            consultar temperatura sector s (0-todos)"},
-  {cmd_cps,    "cps","s            consultar parametros (periodos, estado actuador) sector s (0-todos)"},
-  {cmd_mpps,   "mpps","s p         modificar periodo proc.sensor do sector s (0-todos) (segundos)"},
-  {cmd_mppa,   "mppa","s p         modificar periodo proc.actuador do sector s (0-todos) (segundos)"},
-  {cmd_mppamb, "mpamb","s p        modificar periodo proc.ambiente do sector s (0-todos) (segundos)"},
-  {cmd_aas,    "aas","s v          activar actuador sector s (0-todos) com variacao"},
-  {cmd_cala,   "cala","            consultar limiares de alarme temperatura (minimo e maximo)"},
-  {cmd_dala,   "dala","m M         definir limiares de alarme temperatura , minimo m e maximo M"},
-  {cmd_cer,    "cer","             consultar estado envio registos para historico"},
-  {cmd_aer,    "aer","             activar envio de registos para historico"},
-  {cmd_der,    "der","             desactivar envio de registos para historico"},
-  {cmd_tsm,    "tsm","             terminar processo sistema de monitorizacao"},
-  {cmd_lreg,   "lreg","s [t1[t2]]  listar registos sector s (0-todos) entre t1 (dd/mm/aaaa hh:mm:ss) e t2"},
-  {cmd_trh,    "trh","             terminar processo de registo historico"},
-
+} const commands[] = {
+  {cmd_sos,  "sos","                  help"},
+  {cmd_sair, "sair","                 sair"},
+  {cmd_test, "teste","<arg1> <arg2>   comando de teste"}
 };
 
 #define NCOMMANDS  (sizeof(commands)/sizeof(struct command_d))

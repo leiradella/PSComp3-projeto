@@ -5,10 +5,10 @@ CC = gcc
 CFLAGS = -Wall -g -pthread
 
 #source files
-SRC = sismon.c naosei.c
+SRC = sismon.c naosei.c server_socket.c
 
 #header files
-HDR = naosei.h
+HDR = naosei.h server_socket.h
 
 #object files
 OBJ = $(SRC:.c=.o)
