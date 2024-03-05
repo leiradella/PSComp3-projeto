@@ -1,12 +1,6 @@
 #ifndef SISMON_H_
 #define SISMON_H_
 
-#include <stdio.h>
-#include <pthread.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-
 #define NS 3 /* numero de sectores a controlar */
 #define PSEN 5 /* perıodo inicial dos processos sensores (em segundos) */
 #define PACT 8 /* perıodo inicial dos processos actuadores (segundos) */

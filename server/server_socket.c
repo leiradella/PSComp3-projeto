@@ -15,7 +15,7 @@ void sock_create(struct ServerSocket *soc)
     soc->my_addr.sun_family = AF_UNIX;
     memset(soc->my_addr.sun_path, 0, sizeof(soc->my_addr.sun_path));
     strcpy(soc->my_addr.sun_path, soc->servname);
-    soc->addrlen = (size_t)sizeof(soc->my_addr.sun_family) + strlen(soc->my_addr.sun_path);
+    soc->addrlen = (socklen_t)(sizeof(soc->my_addr.sun_family) + strlen(soc->my_addr.sun_path));
     
     if (bind(soc->sd, (struct sockaddr *)&soc->my_addr, soc->addrlen) < 0 ) 
     {

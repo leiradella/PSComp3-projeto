@@ -1,5 +1,9 @@
 #include "naosei.h"
 #include "server_socket.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <pthread.h>
+#include <unistd.h>
 
 int main ()
 {   
@@ -17,7 +21,7 @@ int main ()
   threadinput1 = (struct Threadinputs *)malloc(sizeof(struct Threadinputs));
     if (threadinput1 == NULL){
       printf("Erro ao alocar memoria\n");
-      return -1;
+      return EXIT_FAILURE;
     }
 
   threadinput1->TEMP = TINI;
