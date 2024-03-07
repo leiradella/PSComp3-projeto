@@ -1,13 +1,15 @@
-#include "naosei.h"
+#include "server_commands.h"
 #include "server_socket.h"
+#include "server_threads.h"
+#include <sys/socket.h>
+#include <unistd.h>
+#include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <pthread.h>
-#include <unistd.h>
 
 int main ()
 {   
-  char buf[100];
+  char command[100];
   
   //criacao do socket
   serversocket servsock;
@@ -15,10 +17,10 @@ int main ()
   sock_create(&servsock);
 
   // criacao das threads
-  threadinput *threadinput1[NS];
-  pthread_t  threads[NT];
+  threadinput *threadinput1;
+  pthread_t threads[NT];
 
-  threadinput1 = (struct Threadinputs *)malloc(sizeof(struct Threadinputs));
+  threadinput1 = (threadinput *)malloc(sizeof(threadinput));
     if (threadinput1 == NULL){
       printf("Erro ao alocar memoria\n");
       return EXIT_FAILURE;
@@ -44,14 +46,10 @@ int main ()
       
   while (1)
   { 
-    if (recvfrom(servsock.sd, buf, sizeof(buf), 0, (struct sockaddr *)&servsock.from, &servsock.fromlen) < 0) {
+    if (recvfrom(servsock.sd, command, sizeof(command), 0, (struct sockaddr *)&servsock.from, &servsock.fromlen) < 0) {
     perror("Erro no recvfrom");
     }
-    printf("%s", buf);
-    if (strcmp(buf, "server_exit") == 0)
-    {
-      break;
-    }
+    handle_commands(command, servsock, threadinput1);
   }
 
   close(servsock.sd);

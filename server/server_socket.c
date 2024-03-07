@@ -1,10 +1,10 @@
 #include "server_socket.h"
-#include <ctype.h>
-#include <string.h>
+#include "sys/socket.h"
+#include <stdlib.h>
 #include <stdio.h>
 
 //this creates a socket for the program
-void sock_create(struct ServerSocket *soc)
+void sock_create(serversocket *soc)
 {
   strcpy(soc->servname, "/tmp/SERV");
 

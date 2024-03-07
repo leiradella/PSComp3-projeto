@@ -1,12 +1,11 @@
-#include "naosei.h" 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "server_threads.h"
 #include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 void* thread_sen(void *threadinput1) {
     
-  struct Threadinputs *senbuf = (struct Threadinputs*)threadinput1;
+  threadinput *senbuf = (threadinput*)threadinput1;
 
   while(1)
   {
@@ -28,7 +27,7 @@ void* thread_sen(void *threadinput1) {
 void* thread_act (void *threadinput1)
 {
   int tact;
-  struct Threadinputs *actbuf = (struct Threadinputs*)threadinput1;
+  threadinput *actbuf = (threadinput*)threadinput1;
   
   while(1)
   {
@@ -52,7 +51,7 @@ void* thread_act (void *threadinput1)
 
 void* thread_amb (void *threadinput1)
 {
- struct Threadinputs *ambbuf = (struct Threadinputs*)threadinput1;
+ threadinput *ambbuf = (threadinput*)threadinput1;
 
  int tfixamb;
  int tvaramb;
