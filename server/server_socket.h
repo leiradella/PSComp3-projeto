@@ -7,15 +7,12 @@
 
 typedef struct ServerSocket {
   int sd;
-  struct sockaddr_un my_addr;
+  struct sockaddr_un my_addr; //socket do servidor
   socklen_t addrlen;
-  struct sockaddr_un from;
+  struct sockaddr_un from; //socket do usuario 
   socklen_t fromlen;
-  char servname[24];
+  char servname[10]; 
 } serversocket;
 
 void sock_create(struct ServerSocket *soc);
-
-void change_servname(char* servname);
-
 #endif
