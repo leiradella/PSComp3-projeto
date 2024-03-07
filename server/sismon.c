@@ -15,7 +15,7 @@ int main ()
   sock_create(&servsock);
 
   // criacao das threads
-  threadinput *threadinput1;
+  threadinput *threadinput1[NS];
   pthread_t  threads[NT];
 
   threadinput1 = (struct Threadinputs *)malloc(sizeof(struct Threadinputs));
@@ -47,6 +47,7 @@ int main ()
     if (recvfrom(servsock.sd, buf, sizeof(buf), 0, (struct sockaddr *)&servsock.from, &servsock.fromlen) < 0) {
     perror("Erro no recvfrom");
     }
+    printf("%s", buf);
     if (strcmp(buf, "server_exit") == 0)
     {
       break;

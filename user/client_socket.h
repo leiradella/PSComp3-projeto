@@ -1,25 +1,20 @@
-#ifndef CLIENT_SOCKET_H_
-#define CLIENT_SOCKET_H_
+#ifndef SERVER_SOCKET_H_
+#define SERVER_SOCKET_H_
 
-#include <stdio.h>
+#include <stdlib.h>
 #include <sys/socket.h>
 #include <sys/un.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <ctype.h>
 
+typedef struct ClientSocket {
+  int sd;
+  struct sockaddr_un my_addr; //socket cliente
+  socklen_t addrlen;
+  struct sockaddr_un to; //socket do servidor
+  socklen_t tolen;
+  char servname[10]; 
+  char cliname[10];
+} clientsocket;
 
-#define SERVNAME "/tmp/SERV"
-#define CLINAME "/tmp/CLI"
+void create_client_socket(struct ClientSocket *soc);
 
-
-extern int sd;
-extern struct sockaddr_un my_addr;
-extern socklen_t addrlen;
-extern struct sockaddr_un to;
-extern socklen_t tolen;
-extern char buf[100];
-  
-void create_client_socket ();  
-  
- #endif
+#endif
