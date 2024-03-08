@@ -14,6 +14,7 @@
 typedef struct Threadinputs {
     int TEMP;
     int tmanip;
+    int id;
 } threadinput;
 
 void* thread_sen (void *threadinput);

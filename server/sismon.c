@@ -37,6 +37,9 @@ for (i = 0; i < 3; i++)
   threadinput[1]->tmanip = 0;
   threadinput[2]->TEMP = TINI;
   threadinput[2]->tmanip = 0;
+  threadinput[0]->id = 1;
+  threadinput[1]->id = 2;
+  threadinput[2]->id = 3;
   
 while (f < NS*NT)
 {

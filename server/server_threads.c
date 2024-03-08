@@ -21,7 +21,7 @@ void* thread_sen(void *threadinput) {
       printf("BELOW MINIMUM TEMPERATURE\n"); 
     }
 
-    printf("CURRENT TEMP: %i\n",senbuf->TEMP); 
+    printf("CURRENT TEMP: %i , sector %i\n",senbuf->TEMP, senbuf->id); 
   }
 }
 
