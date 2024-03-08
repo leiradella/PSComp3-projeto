@@ -5,16 +5,16 @@ CC = gcc
 CFLAGS = -Wall -g -pthread
 
 #source files
-SRC = sismon.c naosei.c server_socket.c
+SRC = sismon.c server_threads.c server_socket.c server_commands.c
 
 #header files
-HDR = naosei.h server_socket.h
+HDR = server_threads.h server_socket.h server_commands.h
 
 #object files
 OBJ = $(SRC:.c=.o)
 
 #exe
-EXEC = projeto
+EXEC = sismon
 
 #build
 all: $(EXEC)

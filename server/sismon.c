@@ -1,15 +1,18 @@
-#include "naosei.h"
+#include "server_commands.h"
 #include "server_socket.h"
+#include "server_threads.h"
+#include <sys/socket.h>
+#include <unistd.h>
+#include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <pthread.h>
-#include <unistd.h>
 
 int main ()
 {   
-  char buf[100];
+  char command[100];
   int i;
   int f= 0;
+
   
   //criacao do socket
   serversocket servsock;
@@ -28,7 +31,6 @@ for (i = 0; i < 3; i++)
       return EXIT_FAILURE;
     }
 }
-for(i = 0; i > 3
   threadinput[0]->TEMP = TINI;
   threadinput[0]->tmanip = 0;
   threadinput[1]->TEMP = TINI;
@@ -60,14 +62,10 @@ for (i = 0; i < NS; i++)
  }
   while (1)
   { 
-    if (recvfrom(servsock.sd, buf, sizeof(buf), 0, (struct sockaddr *)&servsock.from, &servsock.fromlen) < 0) {
+    if (recvfrom(servsock.sd, command, sizeof(command), 0, (struct sockaddr *)&servsock.from, &servsock.fromlen) < 0) {
     perror("Erro no recvfrom");
     }
-    printf("%s", buf);
-    if (strcmp(buf, "server_exit") == 0)
-    {
-      break;
-    }
+    handle_commands(command, servsock, threadinput1);
   }
 
   close(servsock.sd);

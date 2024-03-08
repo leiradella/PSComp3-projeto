@@ -1,12 +1,12 @@
-#include "naosei.h" 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "server_threads.h"
 #include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 void* thread_sen(void *threadinput) {
     
   struct Threadinputs *senbuf = (struct Threadinputs*)threadinput;
+
 
   while(1)
   {
