@@ -3,9 +3,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-void* thread_sen(void *threadinput1) {
+void* thread_sen(void *threadinput) {
     
-  threadinput *senbuf = (threadinput*)threadinput1;
+  struct Threadinputs *senbuf = (struct Threadinputs*)threadinput;
+
 
   while(1)
   {
@@ -24,10 +25,10 @@ void* thread_sen(void *threadinput1) {
   }
 }
 
-void* thread_act (void *threadinput1)
+void* thread_act (void *threadinput)
 {
   int tact;
-  threadinput *actbuf = (threadinput*)threadinput1;
+  struct Threadinputs *actbuf = (struct Threadinputs*)threadinput;
   
   while(1)
   {
@@ -49,9 +50,9 @@ void* thread_act (void *threadinput1)
   }
 }
 
-void* thread_amb (void *threadinput1)
+void* thread_amb (void *threadinput)
 {
- threadinput *ambbuf = (threadinput*)threadinput1;
+ struct Threadinputs *ambbuf = (struct Threadinputs*)threadinput;
 
  int tfixamb;
  int tvaramb;

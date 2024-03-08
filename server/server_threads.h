@@ -16,10 +16,10 @@ typedef struct Threadinputs {
     int tmanip;
 } threadinput;
 
-void* thread_sen (void *threadinput1);
+void* thread_sen (void *threadinput);
 
-void* thread_act (void *threadinput1);
+void* thread_act (void *threadinput);
 
-void* thread_amb (void *threadinput1);
+void* thread_amb (void *threadinput);
 
 #endif
