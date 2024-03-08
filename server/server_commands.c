@@ -8,13 +8,14 @@
 #define WORDSIZE 100
 #define MAXWORDS 50
 
-void handle_commands(char *command, serversocket servsock, threadinput *threadinput1)
+void handle_commands(char *command, serversocket servsock, threadinput **threadinput)
 {
     int commandchar = 0; //current character from command string
     int argchar = 0; //current character from arg string
     int argword = 0; //current string from string vector
     int word_num = 0; //how many words in command
     char **args;
+    char *buf;
 
     args = malloc(sizeof(MAXWORDS));
     if (args == NULL){ 
@@ -32,9 +33,9 @@ void handle_commands(char *command, serversocket servsock, threadinput *threadin
         }
 
         //check if string isnt just a bunch of spaces
-        if (command[commandchar] == '\0')
+        if (command[commandchar] == '\0' || command[commandchar] == '\n')
         {
-            //printf("No words in this string\n");
+            printf("No words in this string\n");
             return;
         }
 
@@ -54,7 +55,7 @@ void handle_commands(char *command, serversocket servsock, threadinput *threadin
             argchar++;
             commandchar++;
         }
-        args[argword][argchar] = '\0'; //worrds ends in null
+        args[argword][argchar] = '\0'; //worrds ends in EOF
         argword++;
         word_num++; //to keep count of how many words
     }
@@ -71,14 +72,34 @@ void handle_commands(char *command, serversocket servsock, threadinput *threadin
                 unlink(servsock.servname);
                 exit(0);
             }
+            return;
         case 2:
             if(strcmp(args[0], "cts") == 0)
             {
-                if(strcmp(args[0], "0") == 0)
+                if(strcmp(args[1], "0") == 0)
+                {
+                    buf = (char *)malloc(sizeof(WORDSIZE));
+                    if (buf == NULL){
+                        printf("Erro ao alocar memoria\n");
+                        return;
+                    }
+                    //mutex_lock()
+                    sprintf(buf, "setor 0: temperatura = %d", threadinput[0]->TEMP);
+                    //mutex_unlock()
+                    if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+                    return;
+                } else if(strcmp(args[1], "1") == 0)
+                {
+                    printf("fuck it\n");
+                } else if(strcmp(args[1], "2") == 0)
+                {
+                    printf("fuck it\n");
+                } if(strcmp(args[1], "todos") == 0)
                 {
                     printf("fuck it\n");
                 }
             }
+            return;
         default:
             printf("invalid command\n"); 
             return;

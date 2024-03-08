@@ -31,12 +31,11 @@ for (i = 0; i < 3; i++)
       return EXIT_FAILURE;
     }
 }
-  threadinput[0]->TEMP = TINI;
-  threadinput[0]->tmanip = 0;
-  threadinput[1]->TEMP = TINI;
-  threadinput[1]->tmanip = 0;
-  threadinput[2]->TEMP = TINI;
-  threadinput[2]->tmanip = 0;
+for(i=0; i < 3; i++)
+{
+  threadinput[i]->TEMP = TINI;
+  threadinput[i]->tmanip = 0;
+}
   
 while (f < NS*NT)
 {
