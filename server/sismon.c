@@ -20,7 +20,7 @@ int main ()
   sock_create(&servsock);
 
   // criacao das threads
-  threadinput *threadinput[NS];
+  thinput *threadinput[NS];
   pthread_t threads[NT*NS];
 
 for (i = 0; i < 3; i++)
@@ -64,7 +64,7 @@ for (i = 0; i < NS; i++)
     if (recvfrom(servsock.sd, command, sizeof(command), 0, (struct sockaddr *)&servsock.from, &servsock.fromlen) < 0) {
     perror("Erro no recvfrom");
     }
-    handle_commands(command, servsock, threadinput);
+    handle_commands(command, servsock, *threadinput);
   }
 
   close(servsock.sd);

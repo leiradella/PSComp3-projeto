@@ -11,12 +11,12 @@ void* thread_sen(void *threadinput) {
   while(1)
   {
     sleep(PSEN);
-    if (senbuf->TEMP > TMAX) 
+    if (senbuf->TEMP > 100) 
     {  
       printf("ABOVE MAX TEMPERATURE\n"); 
     }
 
-    if (senbuf->TEMP < TMIN) 
+    if (senbuf->TEMP < -100) 
     {
       printf("BELOW MINIMUM TEMPERATURE\n"); 
     }

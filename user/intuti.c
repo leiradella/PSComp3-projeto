@@ -12,7 +12,7 @@ void *thread_func(void *clisoc)
     soc = (clientsocket *)clisoc;
     while(1)
     {
-        if (recvfrom(soc->sd, buf, sizeof(WORDSIZE), 0, NULL, NULL) < 0) {
+        if (recvfrom(soc->sd, buf, WORDSIZE, 0, NULL, NULL) < 0) {
             perror("Erro no recvfrom");
         }
         printf("%s\n", buf);

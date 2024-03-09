@@ -8,7 +8,7 @@
 #define WORDSIZE 100
 #define MAXWORDS 50
 
-void handle_commands(char *command, serversocket servsock, threadinput **threadinput)
+void handle_commands(char *command, serversocket servsock, thinput **threadinput)
 {
     int commandchar = 0; //current character from command string
     int argchar = 0; //current character from arg string
@@ -17,7 +17,7 @@ void handle_commands(char *command, serversocket servsock, threadinput **threadi
     char **args;
     char *buf;
 
-    args = malloc(sizeof(MAXWORDS));
+    args = malloc(MAXWORDS);
     if (args == NULL){ 
         printf("Erro ao alocar memoria\n");
         return;
@@ -40,7 +40,7 @@ void handle_commands(char *command, serversocket servsock, threadinput **threadi
         }
 
         //make space for word in string vector
-        args[argword] = (char *)malloc(sizeof(WORDSIZE));
+        args[argword] = (char *)malloc(WORDSIZE);
         if (args[argword] == NULL){
             printf("Erro ao alocar memoria\n");
             return;
@@ -78,7 +78,7 @@ void handle_commands(char *command, serversocket servsock, threadinput **threadi
             {
                 if(strcmp(args[1], "0") == 0)
                 {
-                    buf = (char *)malloc(sizeof(WORDSIZE));
+                    buf = (char *)malloc(WORDSIZE);
                     if (buf == NULL){
                         printf("Erro ao alocar memoria\n");
                         return;
@@ -90,14 +90,51 @@ void handle_commands(char *command, serversocket servsock, threadinput **threadi
                     return;
                 } else if(strcmp(args[1], "1") == 0)
                 {
-                    printf("fuck it\n");
+                    buf = (char *)malloc(WORDSIZE);
+                    if (buf == NULL){
+                        printf("Erro ao alocar memoria\n");
+                        return;
+                    }
+                    //mutex_lock()
+                    sprintf(buf, "setor 1: temperatura = %d", threadinput[1]->TEMP);
+                    //mutex_unlock()
+                    if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+                    return;
                 } else if(strcmp(args[1], "2") == 0)
                 {
-                    printf("fuck it\n");
+                    buf = (char *)malloc(WORDSIZE);
+                    if (buf == NULL){
+                        printf("Erro ao alocar memoria\n");
+                        return;
+                    }
+                    //mutex_lock()
+                    sprintf(buf, "setor 2: temperatura = %d", threadinput[2]->TEMP);
+                    //mutex_unlock()
+                    if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+                    return;
                 } if(strcmp(args[1], "todos") == 0)
                 {
-                    printf("fuck it\n");
+                    buf = (char *)malloc(WORDSIZE);
+                    if (buf == NULL){
+                        printf("Erro ao alocar memoria\n");
+                        return;
+                    }
+                    int i;
+                    //mutex_lock()
+                    for (i=0;i<NS;i++){
+                        sprintf(buf, "setor %d: temperatura = %d", i,threadinput[i]->TEMP);
+                        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+                    }
+                    //mutex_unlock()
+                    return;
                 }
+                buf = (char *)malloc(WORDSIZE);
+                if (buf == NULL){
+                    printf("Erro ao alocar memoria\n");
+                    return;
+                }
+                sprintf(buf, "setor invalido");
+                if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
             }
             return;
         default:
