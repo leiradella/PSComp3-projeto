@@ -42,15 +42,15 @@ void* thread_act (void *threadinput)
     {
       sleep(actbuf->pact);
 
-      if (actbuf->tmanip > 0)
+      if (actbuf->tmanip == '+')
       {
         tact = 1;  
       }
-      else if (actbuf->tmanip < 0)
+      else if (actbuf->tmanip == '-')
       {
         tact = -1;  
       }
-      else
+      else if (actbuf->tmanip == '0')
       {
         tact = 0;  
       }

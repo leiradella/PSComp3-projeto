@@ -32,7 +32,7 @@ for (i = 0; i < NS; i++)
 }
 for(i=0; i < NS; i++)
 {
-  threadinput[i]->tmanip = 0;
+  threadinput[i]->tmanip = '+';
   threadinput[i]->TEMP = TINI;
   threadinput[i]->psen = PSEN;
   threadinput[i]->pact = PACT;

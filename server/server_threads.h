@@ -16,7 +16,7 @@ extern int tmax;
 
 typedef struct Threadinputs {
     int TEMP;
-    int tmanip;
+    char tmanip;
     int psen;
     int pact;
     int pamb;
