@@ -37,6 +37,7 @@ for(i=0; i < NS; i++)
   threadinput[i]->psen = PSEN;
   threadinput[i]->pact = PACT;
   threadinput[i]->pamb = PAMB;
+  threadinput[i]->id = i+1;
 }
   
 for (i = 0; i < NS; i++)

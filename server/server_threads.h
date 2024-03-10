@@ -20,7 +20,7 @@ typedef struct Threadinputs {
     int psen;
     int pact;
     int pamb;
-
+    int id;
 } thinput;
 
 void* thread_sen (void *threadinput);
