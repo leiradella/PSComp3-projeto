@@ -27,6 +27,7 @@ void* thread_sen(void *threadinput) {
       }
 
     printf("CURRENT TEMP: %i , sector %i\n",senbuf->TEMP, senbuf->id); 
+    }
   }
 }
 
