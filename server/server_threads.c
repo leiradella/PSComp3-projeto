@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+int tmin = TMIN;
+int tmax = TMAX;
+
 void* thread_sen(void *threadinput) {
     
   struct Threadinputs *senbuf = (struct Threadinputs*)threadinput;
@@ -10,16 +13,18 @@ void* thread_sen(void *threadinput) {
 
   while(1)
   {
-    sleep(PSEN);
-    if (senbuf->TEMP > TMAX) 
-    {  
-      printf("ABOVE MAX TEMPERATURE\n"); 
-    }
-
-    if (senbuf->TEMP < TMIN) 
+    if (senbuf->psen != 0)
     {
-      printf("BELOW MINIMUM TEMPERATURE\n"); 
-    }
+      sleep(senbuf->psen);
+      if (senbuf->TEMP > tmax) 
+      {  
+        printf("ABOVE MAX TEMPERATURE\n"); 
+      }
+
+      if (senbuf->TEMP < tmin) 
+      {
+        printf("BELOW MINIMUM TEMPERATURE\n"); 
+      }
 
     printf("CURRENT TEMP: %i , sector %i\n",senbuf->TEMP, senbuf->id); 
   }
@@ -32,21 +37,24 @@ void* thread_act (void *threadinput)
   
   while(1)
   {
-    sleep(PACT);
+    if (actbuf->pact != 0)
+    {
+      sleep(actbuf->pact);
 
-    if (actbuf->tmanip > 0)
-    {
-      tact = 1;  
+      if (actbuf->tmanip > 0)
+      {
+        tact = 1;  
+      }
+      else if (actbuf->tmanip < 0)
+      {
+        tact = -1;  
+      }
+      else
+      {
+        tact = 0;  
+      }
+      actbuf->TEMP += tact; 
     }
-    else if (actbuf->tmanip < 0)
-    {
-      tact = -1;  
-    }
-    else
-    {
-      tact = 0;  
-    }
-    actbuf->TEMP += tact; 
   }
 }
 
@@ -60,25 +68,28 @@ void* thread_amb (void *threadinput)
 
   while (1)
   {
-    sleep(PAMB);  
-    tvaramb = rand() % 3 -1;
+    if (ambbuf->pamb != 0)
+    {
+      sleep(ambbuf->pamb);  
+      tvaramb = rand() % 3 -1;
 
-    if (ambcycle/NCICL == 0)
-    {
-      tfixamb = 1; 
-    }
-    else 
-    {
-    
-      tfixamb = -1;
-    
-      if (ambcycle == 2*NCICL)
+      if (ambcycle/NCICL == 0)
       {
-      ambcycle = 0;
-      tfixamb = 1;
-      }   
+        tfixamb = 1; 
+      }
+      else 
+      {
+      
+        tfixamb = -1;
+      
+        if (ambcycle == 2*NCICL)
+        {
+        ambcycle = 0;
+        tfixamb = 1;
+        }   
+      }
+      ambbuf->TEMP += tfixamb + tvaramb;
+      ambcycle++;
     }
-    ambbuf->TEMP += tfixamb + tvaramb;
-    ambcycle++;
   }
 } 

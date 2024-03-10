@@ -29,5 +29,5 @@ $(EXEC): $(OBJ)
 
 #clean
 clean:
-	rm -f $(OBJ)
+	rm -f $(OBJ) $(EXEC)
 

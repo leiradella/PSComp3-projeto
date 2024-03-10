@@ -1,12 +1,36 @@
 #include "client_socket.h"
+#include <pthread.h>
 #include <unistd.h>
 #include <stdio.h>
+
+#define WORDSIZE 100
+
+void *thread_func(void *clisoc)
+{
+    char buf [WORDSIZE];
+    clientsocket *soc;
+    soc = (clientsocket *)clisoc;
+    while(1)
+    {
+        if (recvfrom(soc->sd, buf, WORDSIZE, 0, NULL, NULL) < 0) {
+            perror("Erro no recvfrom");
+        }
+        printf("%s\n", buf);
+    }
+}
+
 
 int main()
 {
     clientsocket clisoc;
+    pthread_t  thread;
     char buf[50];
+
     create_client_socket(&clisoc);
+
+    if (pthread_create(&thread, NULL, thread_func, (void *)&clisoc) != 0) {
+       printf("Erro a criar thread\n");
+    }
 
     while(1)
     {
