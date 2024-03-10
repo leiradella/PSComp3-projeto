@@ -11,7 +11,6 @@ int main ()
 {   
   char command[100];
   int i;
-  int f= 0;
 
   
   //criacao do socket
@@ -21,9 +20,9 @@ int main ()
 
   // criacao das threads
   thinput *threadinput[NS];
-  pthread_t threads[NT*NS];
+  pthread_t threads[NS][NT];
 
-for (i = 0; i < 3; i++)
+for (i = 0; i < NS; i++)
 {
   threadinput[i] = (struct Threadinputs *)malloc(sizeof(struct Threadinputs));
     if (threadinput[i] == NULL){
@@ -31,40 +30,36 @@ for (i = 0; i < 3; i++)
       return EXIT_FAILURE;
     }
 }
-for(i=0; i < 3; i++)
+for(i=0; i < NS; i++)
 {
-  threadinput[i]->TEMP = TINI;
   threadinput[i]->tmanip = 0;
+  threadinput[i]->TEMP = TINI;
+  threadinput[i]->psen = PSEN;
+  threadinput[i]->pact = PACT;
+  threadinput[i]->pamb = PAMB;
 }
   
-while (f < NS*NT)
-{
-
 for (i = 0; i < NS; i++)
 {
-  if (pthread_create(&threads[f], NULL, thread_sen, (void*)threadinput[i]) != 0) 
+  if (pthread_create(&threads[i][0], NULL, thread_sen, (void*)threadinput[i]) != 0) 
   {
     printf("Erro ao criar thread sensor"); 
   }
-  f++;
-  if (pthread_create(&threads[f], NULL, thread_act, (void*)threadinput[i])  != 0) 
+  if (pthread_create(&threads[i][1], NULL, thread_act, (void*)threadinput[i])  != 0) 
   {
     printf("Erro a criar thread atuador"); 
   }
-  f++;
-  if (pthread_create(&threads[f], NULL, thread_amb, (void*)threadinput[i])  != 0) 
+  if (pthread_create(&threads[i][2], NULL, thread_amb, (void*)threadinput[i])  != 0) 
   {
     printf("Erro a criar thread ambiente"); 
-  }
-  f++;
- }   
+  } 
  }
   while (1)
   { 
     if (recvfrom(servsock.sd, command, sizeof(command), 0, (struct sockaddr *)&servsock.from, &servsock.fromlen) < 0) {
     perror("Erro no recvfrom");
     }
-    handle_commands(command, servsock, *threadinput);
+    handle_commands(command, servsock, threadinput);
   }
 
   close(servsock.sd);

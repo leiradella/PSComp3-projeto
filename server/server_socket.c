@@ -1,5 +1,6 @@
 #include "server_socket.h"
 #include "sys/socket.h"
+#include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -7,6 +8,7 @@
 void sock_create(serversocket *soc)
 {
   strcpy(soc->servname, "/tmp/SERV");
+  unlink(soc->servname);
 
  if ((soc->sd = socket(AF_UNIX, SOCK_DGRAM, 0)) < 0 ) {
     perror("Erro a criar socket"); exit(-1);

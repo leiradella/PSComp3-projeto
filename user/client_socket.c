@@ -1,4 +1,5 @@
 #include "client_socket.h"
+#include <unistd.h>
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
@@ -8,6 +9,7 @@ void create_client_socket(struct ClientSocket *soc)
 {
   strcpy(soc->servname, "/tmp/SERV");
   strcpy(soc->cliname, "/tmp/CLI");
+  unlink(soc->cliname);
 
  if ((soc->sd = socket(AF_UNIX, SOCK_DGRAM, 0)) < 0 ) {
     perror("Erro a criar socket"); exit(-1);
