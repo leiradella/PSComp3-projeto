@@ -18,15 +18,13 @@ void* thread_sen(void *threadinput) {
       sleep(senbuf->psen);
       if (senbuf->TEMP > tmax) 
       {  
-        printf("ABOVE MAX TEMPERATURE\n"); 
+        printf("ABOVE MAX TEMPERATURE\a\n"); 
       }
 
       if (senbuf->TEMP < tmin) 
       {
-        printf("BELOW MINIMUM TEMPERATURE\n"); 
+        printf("BELOW MINIMUM TEMPERATURE\a\n"); 
       }
-
-    printf("CURRENT TEMP: %i , sector %i\n",senbuf->TEMP, senbuf->id); 
     }
   }
 }

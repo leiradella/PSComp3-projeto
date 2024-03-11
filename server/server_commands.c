@@ -147,7 +147,7 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
                     int i;
                     //mutex_lock()
                     for (i=0;i<NS;i++){
-                        snprintf(buf, WORDSIZE, "setor %d: estado =\n periodo sensores = %d\n periodo actuadores = %d\n periodo ambiente = %d", i,threadinput[i]->tmanip,threadinput[i]->psen, threadinput[i]->pact, threadinput[i]->pamb);
+                        snprintf(buf, WORDSIZE, "setor %d: estado = %c\n periodo sensores = %d\n periodo actuadores = %d\n periodo ambiente = %d", i,threadinput[i]->tmanip,threadinput[i]->psen, threadinput[i]->pact, threadinput[i]->pamb);
                         if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
                     }
                     //mutex_unlock()
