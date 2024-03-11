@@ -84,33 +84,33 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
         case 2:
             if (strcmp(args[0], "cts") == 0)
             {
-                if(strcmp(args[1], "0") == 0)
+                if(strcmp(args[1], "1") == 0)
                 {
                     //mutex_lock()
                     snprintf(buf, WORDSIZE, "setor 1: temperatura = %d", threadinput[0]->TEMP);
                     //mutex_unlock()
                     if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
                     return;
-                } else if(strcmp(args[1], "1") == 0)
+                } else if(strcmp(args[1], "2") == 0)
                 {
                     //mutex_lock()
                     snprintf(buf, WORDSIZE,"setor 2: temperatura = %d", threadinput[1]->TEMP);
                     //mutex_unlock()
                     if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
                     return;
-                } else if(strcmp(args[1], "2") == 0)
+                } else if(strcmp(args[1], "3") == 0)
                 {
                     //mutex_lock()
                     snprintf(buf, WORDSIZE,"setor 3: temperatura = %d", threadinput[2]->TEMP);
                     //mutex_unlock()
                     if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
                     return;
-                } if(strcmp(args[1], "todos") == 0)
+                } if(strcmp(args[1], "0") == 0)
                 {
                     int i;
                     //mutex_lock()
                     for (i=0;i<NS;i++){
-                        snprintf(buf, WORDSIZE,"setor %d: temperatura = %d", i,threadinput[i]->TEMP);
+                        snprintf(buf, WORDSIZE,"setor %d: temperatura = %d", threadinput[i]->id,threadinput[i]->TEMP);
                         if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
                     }
                     //mutex_unlock()
@@ -121,33 +121,33 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
                 if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
             }
             if (strcmp(args[0], "cps") == 0) { 
-                if(strcmp(args[1], "0") == 0)
+                if(strcmp(args[1], "1") == 0)
                 {
                     //mutex_lock()
                     snprintf(buf, WORDSIZE, "setor 1:\nestado = %c\nperiodo sensores = %d\nperiodo actuadores = %d\nperiodo ambiente = %d",threadinput[0]->tmanip,threadinput[0]->psen, threadinput[0]->pact, threadinput[0]->pamb);
                     //mutex_unlock()
                     if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
                     return;
-                } else if(strcmp(args[1], "1") == 0)
+                } else if(strcmp(args[1], "2") == 0)
                 {
                     //mutex_lock()
                     snprintf(buf, WORDSIZE, "setor 2:\nestado = %c\nperiodo sensores = %d\nperiodo actuadores = %d\nperiodo ambiente = %d",threadinput[1]->tmanip,threadinput[1]->psen, threadinput[1]->pact, threadinput[1]->pamb);
                     //mutex_unlock()
                     if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
                     return;
-                } else if(strcmp(args[1], "2") == 0)
+                } else if(strcmp(args[1], "3") == 0)
                 {
                     //mutex_lock()
                     snprintf(buf, WORDSIZE, "setor 3:\nestado = %c\nperiodo sensores = %d\nperiodo actuadores = %d\nperiodo ambiente = %d",threadinput[2]->tmanip,threadinput[2]->psen, threadinput[2]->pact, threadinput[2]->pamb);
                     //mutex_unlock()
                     if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
                     return;
-                } if(strcmp(args[1], "todos") == 0)
+                } if(strcmp(args[1], "0") == 0)
                 {
                     int i;
                     //mutex_lock()
                     for (i=0;i<NS;i++){
-                        snprintf(buf, WORDSIZE, "setor %d: estado = %c\n periodo sensores = %d\n periodo actuadores = %d\n periodo ambiente = %d", i,threadinput[i]->tmanip,threadinput[i]->psen, threadinput[i]->pact, threadinput[i]->pamb);
+                        snprintf(buf, WORDSIZE, "setor %d: estado = %c\n periodo sensores = %d\n periodo actuadores = %d\n periodo ambiente = %d", threadinput[i]->id,threadinput[i]->tmanip,threadinput[i]->psen, threadinput[i]->pact, threadinput[i]->pamb);
                         if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
                     }
                     //mutex_unlock()
@@ -192,7 +192,7 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
                 return;
             }
             if (strcmp(args[0], "mpps") == 0) {
-                if (strcmp(args[1], "0") == 0)
+                if (strcmp(args[1], "1") == 0)
                 {
                     char *end;
                     int num = (int)(strtol(args[2], &end, 10));
@@ -210,7 +210,7 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
                     threadinput[0]->psen = num;
                     return;
                 }
-                if (strcmp(args[1], "1") == 0)
+                if (strcmp(args[1], "2") == 0)
                 {
                     char *end;
                     int num = (int)(strtol(args[2], &end, 10));
@@ -228,7 +228,7 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
                     threadinput[1]->psen = num;
                     return;
                 }
-                if (strcmp(args[1], "2") == 0)
+                if (strcmp(args[1], "3") == 0)
                 {
                     char *end;
                     int num = (int)(strtol(args[2], &end, 10));
@@ -246,7 +246,7 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
                     threadinput[2]->psen = num;
                     return;
                 }
-                if (strcmp(args[1], "todos") == 0)
+                if (strcmp(args[1], "0") == 0)
                 {
                     char *end;
                     int num = (int)(strtol(args[2], &end, 10));
@@ -271,7 +271,7 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
                 return; 
             }
             if (strcmp(args[0], "mppa") == 0) {
-                if (strcmp(args[1], "0") == 0)
+                if (strcmp(args[1], "1") == 0)
                 {
                     char *end;
                     int num = (int)(strtol(args[2], &end, 10));
@@ -289,7 +289,7 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
                     threadinput[0]->pact = num;
                     return;
                 }
-                if (strcmp(args[1], "1") == 0)
+                if (strcmp(args[1], "2") == 0)
                 {
                     char *end;
                     int num = (int)(strtol(args[2], &end, 10));
@@ -307,7 +307,7 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
                     threadinput[1]->pact = num;
                     return;
                 }
-                if (strcmp(args[1], "2") == 0)
+                if (strcmp(args[1], "3") == 0)
                 {
                     char *end;
                     int num = (int)(strtol(args[2], &end, 10));
@@ -325,7 +325,7 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
                     threadinput[2]->pact = num;
                     return;
                 }
-                if (strcmp(args[1], "todos") == 0)
+                if (strcmp(args[1], "0") == 0)
                 {
                     char *end;
                     int num = (int)(strtol(args[2], &end, 10));
@@ -350,7 +350,7 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
                 return; 
             }
             if (strcmp(args[0], "mppamb") == 0) {
-                if (strcmp(args[1], "0") == 0)
+                if (strcmp(args[1], "1") == 0)
                 {
                     char *end;
                     int num = (int)(strtol(args[2], &end, 10));
@@ -368,7 +368,7 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
                     threadinput[0]->pamb = num;
                     return;
                 }
-                if (strcmp(args[1], "1") == 0)
+                if (strcmp(args[1], "2") == 0)
                 {
                     char *end;
                     int num = (int)(strtol(args[2], &end, 10));
@@ -386,7 +386,7 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
                     threadinput[1]->pamb = num;
                     return;
                 }
-                if (strcmp(args[1], "2") == 0)
+                if (strcmp(args[1], "3") == 0)
                 {
                     char *end;
                     int num = (int)(strtol(args[2], &end, 10));
@@ -404,7 +404,7 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
                     threadinput[2]->pamb = num;
                     return;
                 }
-                if (strcmp(args[1], "todos") == 0)
+                if (strcmp(args[1], "0") == 0)
                 {
                     char *end;
                     int num = (int)(strtol(args[2], &end, 10));
