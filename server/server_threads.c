@@ -2,11 +2,9 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
 
 int tmin = TMIN;
 int tmax = TMAX;
-time_t start1, end1, start2,end2,start3,end3;
 
 void* thread_sen(void *threadinput) {
     
@@ -16,9 +14,7 @@ void* thread_sen(void *threadinput) {
   {
     if (senbuf->psen != 0)
     {
-      time(&start1);
-      do time(&end1); while(end1 <= start1 + senbuf->psen);
-
+      sleep(senbuf->psen)
       if (senbuf->TEMP > tmax) 
       {  
         printf("ABOVE MAX TEMPERATURE\a\n"); 
@@ -29,7 +25,6 @@ void* thread_sen(void *threadinput) {
         printf("BELOW MINIMUM TEMPERATURE\a\n"); 
       }
     }
-    start1 = end1;
   }
 }
 
@@ -42,9 +37,7 @@ void* thread_act (void *threadinput)
   {
     if (actbuf->pact != 0)
     {
-      time(&start2);
-      do time(&end2); while(end2 <= start2 + actbuf->pact);
-
+      sleep(actbuf->pact);
       if (actbuf->tmanip == '+')
       {
         tact = 1;  
@@ -59,7 +52,6 @@ void* thread_act (void *threadinput)
       }
       actbuf->TEMP += tact; 
     }
-    start2 = end2;
   }
 }
 
@@ -74,9 +66,7 @@ void* thread_amb (void *threadinput)
   {
     if (ambbuf->pamb != 0)
     {
-      time(&start3);
-      do time(&end3); while(end3 <= start3 + ambbuf->pamb);
-
+      sleep(ambbuf->pamb);
       tvaramb = rand() % 3 -1;
 
       if (ambcycle/NCICL == 0)
@@ -97,6 +87,5 @@ void* thread_amb (void *threadinput)
       ambbuf->TEMP += tfixamb + tvaramb;
       ambcycle++;
     }
-    start3 = end3;
   }
 } 
