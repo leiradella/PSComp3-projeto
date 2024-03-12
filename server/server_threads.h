@@ -11,15 +11,22 @@
 #define NCICL 12 /* numero de ciclos para alternancia ambiente */
 #define NT 3   /*numero de threads*/
 
+extern int tmin;
+extern int tmax;
+
 typedef struct Threadinputs {
     int TEMP;
-    int tmanip;
-} threadinput;
+    char tmanip;
+    int psen;
+    int pact;
+    int pamb;
+    int id;
+} thinput;
 
-void* thread_sen (void *threadinput1);
+void* thread_sen (void *threadinput);
 
-void* thread_act (void *threadinput1);
+void* thread_act (void *threadinput);
 
-void* thread_amb (void *threadinput1);
+void* thread_amb (void *threadinput);
 
 #endif

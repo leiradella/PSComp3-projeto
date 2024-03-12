@@ -1,9 +1,8 @@
 #ifndef SERVER_SOCKET_H_
 #define SERVER_SOCKET_H_
 
-#include <stdlib.h>
-#include <sys/socket.h>
 #include <sys/un.h>
+#include <sys/socket.h>
 
 typedef struct ServerSocket {
   int sd;
@@ -14,5 +13,5 @@ typedef struct ServerSocket {
   char servname[10]; 
 } serversocket;
 
-void sock_create(struct ServerSocket *soc);
+void sock_create(serversocket *soc);
 #endif

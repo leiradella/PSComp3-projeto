@@ -1,13 +1,17 @@
 #include "client_socket.h"
+#include <unistd.h>
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
+
+#define SISMON "/tmp/SISMON"
 
 //this creates a socket for the program
 void create_client_socket(struct ClientSocket *soc)
 {
   strcpy(soc->servname, "/tmp/SERV");
-  strcpy(soc->cliname, "/tmp/CLI");
+  strcpy(soc->cliname, SISMON);
+  unlink(soc->cliname);
 
  if ((soc->sd = socket(AF_UNIX, SOCK_DGRAM, 0)) < 0 ) {
     perror("Erro a criar socket"); exit(-1);
