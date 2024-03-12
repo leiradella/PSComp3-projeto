@@ -9,6 +9,67 @@
 #define WORDSIZE 100
 #define MAXWORDS 50
 
+
+void tsm(serversocket servsock) //server exit
+{
+    char buf[WORDSIZE];
+
+    snprintf(buf, WORDSIZE, "Server Closing...");
+    if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+    close(servsock.sd);
+    unlink(servsock.servname);
+    exit(0);
+}
+
+void cala(serversocket servsock) //see min and max temperatures for alarm
+{
+    char buf[WORDSIZE];
+
+    snprintf(buf, WORDSIZE, "minimum temp = %d\nmaximum temp = %d", tmin, tmax);
+    if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+}
+
+void cts(serversocket servsock, thinput **threadinput, char** args)
+{
+    char buf[WORDSIZE];
+
+    if(strcmp(args[1], "0") == 0)
+    {
+        //mutex_lock()
+        snprintf(buf, WORDSIZE, "setor 1: temperatura = %d", threadinput[0]->TEMP);
+        //mutex_unlock()
+        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+        return;
+    } else if(strcmp(args[1], "1") == 0)
+    {
+        //mutex_lock()
+        snprintf(buf, WORDSIZE,"setor 2: temperatura = %d", threadinput[1]->TEMP);
+        //mutex_unlock()
+        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+        return;
+    } else if(strcmp(args[1], "2") == 0)
+    {
+        //mutex_lock()
+        snprintf(buf, WORDSIZE,"setor 3: temperatura = %d", threadinput[2]->TEMP);
+        //mutex_unlock()
+        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+        return;
+    } else if(strcmp(args[1], "todos") == 0)
+    {
+        int i;
+        //mutex_lock()
+        for (i=0;i<NS;i++){
+            snprintf(buf, WORDSIZE,"setor %d: temperatura = %d", i,threadinput[i]->TEMP);
+            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+        }
+        //mutex_unlock()
+        return;
+    }
+    sprintf(buf, "setor invalido");
+    if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+}
+
+
 void handle_commands(char *command, serversocket servsock, thinput **threadinput)
 {
     int commandchar = 0; //current character from command string
@@ -69,56 +130,22 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
         case 1:
             if (strcmp(args[0], "tsm") == 0)
             {
-                printf("Server closing...\n");
-                close(servsock.sd);
-                unlink(servsock.servname);
-                exit(0);
+                tsm(servsock);
+                return;
             }
-            if (strcmp(args[0], "cala") == 0) {
-                snprintf(buf, WORDSIZE, "minimum temp = %d\nmaximum temp = %d", tmin, tmax);
-                if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+            else if (strcmp(args[0], "cala") == 0) {
+                cala(servsock);
+                return;
             }
+            //if every compare fails, then the command doesnt exist
             snprintf(buf, WORDSIZE, "comando invalido");
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
             return;
         case 2:
             if (strcmp(args[0], "cts") == 0)
             {
-                if(strcmp(args[1], "0") == 0)
-                {
-                    //mutex_lock()
-                    snprintf(buf, WORDSIZE, "setor 1: temperatura = %d", threadinput[0]->TEMP);
-                    //mutex_unlock()
-                    if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-                    return;
-                } else if(strcmp(args[1], "1") == 0)
-                {
-                    //mutex_lock()
-                    snprintf(buf, WORDSIZE,"setor 2: temperatura = %d", threadinput[1]->TEMP);
-                    //mutex_unlock()
-                    if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-                    return;
-                } else if(strcmp(args[1], "2") == 0)
-                {
-                    //mutex_lock()
-                    snprintf(buf, WORDSIZE,"setor 3: temperatura = %d", threadinput[2]->TEMP);
-                    //mutex_unlock()
-                    if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-                    return;
-                } if(strcmp(args[1], "todos") == 0)
-                {
-                    int i;
-                    //mutex_lock()
-                    for (i=0;i<NS;i++){
-                        snprintf(buf, WORDSIZE,"setor %d: temperatura = %d", i,threadinput[i]->TEMP);
-                        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-                    }
-                    //mutex_unlock()
-
-                    return;
-                }
-                sprintf(buf, "setor invalido");
-                if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+                cts(servsock, threadinput, args);
+                return;
             }
             if (strcmp(args[0], "cps") == 0) { 
                 if(strcmp(args[1], "0") == 0)
