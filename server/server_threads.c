@@ -14,7 +14,7 @@ void* thread_sen(void *threadinput) {
   {
     if (senbuf->psen != 0)
     {
-      sleep(senbuf->psen)
+      sleep(senbuf->psen);
       if (senbuf->TEMP > tmax) 
       {  
         printf("ABOVE MAX TEMPERATURE\a\n"); 
