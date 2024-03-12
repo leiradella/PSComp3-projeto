@@ -24,22 +24,22 @@ struct 	command_d {
   char*	cmd_name;
   char*	cmd_help;
 } const commands[] = {
-  {"sos", "help"},
-  {"help","help"},
-  {"sair", "sair da interface do usuario"},
-  {"tsm", "terminar servidor"},
-  {"cts s", "cosnulta temperatura do setor s (0 = todos setores)"},
-  {"cps s", "consulta os parametros do setor s (0 = todos setores)"},
-  {"mpps s p", "modifica periodo dos sensores do setor s (0 = todos setores) para p (novo periodo)"},
-  {"mppa s p", "modifica periodo dos actuadores do setor s (0 = todos setores) para p (novo periodo)"},
-  {"mppamb s p", "modifica periodo do ambiente do setor s (0 = todos setores) para p (novo periodo)"},
-  {"dala m M", "modifica os limites de temperatura de alarme para todos setores (m = temperatura minima M = temperatura maxima)"},
-  {"cala", "consulta as temperaturas de alarma dos setores"},
-  {"aas s v", "ativa atuador do setor s (0 = todos setores) com variação ±v"},
-  {"cer", "consultar estado do envio dos registos para o histórico"},
-  {"aer","ativa o envio de registos para o histórico"},
-  {"der","desativa o envio de registos para o histórico"},
-  {"lreg s [t1 [t2]]","lista registosdo setor s (0 = todos setores) entre t1 e t2, caso t2 nao seja especificado, lista todos desde t1 até o presente"}
+  {"sos",              "                    -help"},
+  {"help",             "                    -help"},
+  {"sair",             "                    -sair da interface do usuario"},
+  {"tsm",              "                    -terminar servidor"},
+  {"cts s",            "                    -cosnulta temperatura do setor s (0 = todos setores)"},
+  {"cps s",            "                    -consulta os parametros do setor s (0 = todos setores)"},
+  {"mpps s p",         "                    -modifica periodo dos sensores do setor s (0 = todos setores) para p (novo periodo)"},
+  {"mppa s p",         "                    -modifica periodo dos actuadores do setor s (0 = todos setores) para p (novo periodo)"},
+  {"mppamb s p",       "                    -modifica periodo do ambiente do setor s (0 = todos setores) para p (novo periodo)"},
+  {"dala m M  ",       "                    -modifica os limites de temperatura de alarme para todos setores (m = temperatura minima M = temperatura maxima)"},
+  {"cala",             "                    -consulta as temperaturas de alarma dos setores"},
+  {"aas s v",          "                    -ativa atuador do setor s (0 = todos setores) com variação ±v"},
+  {"cer",              "                    -consultar estado do envio dos registos para o histórico"},
+  {"aer",              "                    -ativa o envio de registos para o histórico"},
+  {"der",              "                    -desativa o envio de registos para o histórico"},
+  {"lreg s [t1 [t2]]", "                    -lista registosdo setor s (0 = todos setores) entre t1 e t2, caso t2 nao seja especificado, lista todos desde t1 até o presente"}
 };
 
 int main()

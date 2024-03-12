@@ -486,7 +486,6 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
             if (strcmp(args[0], "mppamb") == 0) {
                 mppamb(servsock, threadinput, args);
                 return;
-            }
             //if every compare fails, then the command doesnt exist
             snprintf(buf, WORDSIZE, "comando invalido");
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
