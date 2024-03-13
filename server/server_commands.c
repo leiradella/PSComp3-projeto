@@ -136,8 +136,10 @@ void dala(serversocket servsock, char** args) //change min and max temp for alar
         if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
         return;
     }
+    pthread_mutex_lock(&mutex);
     tmin = num1;
     tmax = num2;
+    pthread_mutex_unlock(&mutex);
 }
 
 void mpps(serversocket servsock, thinput **threadinput, char** args) //set sensor period time
@@ -158,7 +160,9 @@ void mpps(serversocket servsock, thinput **threadinput, char** args) //set senso
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
             return; 
         }
+        pthread_mutex_lock(&mutex);
         threadinput[0]->psen = num;
+        pthread_mutex_unlock(&mutex);
         return;
     }
     if (strcmp(args[1], "2") == 0)
@@ -176,7 +180,9 @@ void mpps(serversocket servsock, thinput **threadinput, char** args) //set senso
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
             return; 
         }
+        pthread_mutex_lock(&mutex);
         threadinput[1]->psen = num;
+        pthread_mutex_unlock(&mutex);
         return;
     }
     if (strcmp(args[1], "3") == 0)
@@ -194,7 +200,9 @@ void mpps(serversocket servsock, thinput **threadinput, char** args) //set senso
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
             return; 
         }
+        pthread_mutex_lock(&mutex);
         threadinput[2]->psen = num;
+        pthread_mutex_unlock(&mutex);
         return;
     }
     if (strcmp(args[1], "0") == 0)
@@ -213,7 +221,9 @@ void mpps(serversocket servsock, thinput **threadinput, char** args) //set senso
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
             return; 
         }
+        pthread_mutex_lock(&mutex);
         for(i = 0;i<3;i++) threadinput[i]->psen = num;
+        pthread_mutex_unlock(&mutex);
         return;
     }
     snprintf(buf, WORDSIZE, "1st argument invalid");
@@ -239,7 +249,9 @@ void mppa(serversocket servsock, thinput **threadinput, char** args) //set actua
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
             return; 
         }
+        pthread_mutex_lock(&mutex);
         threadinput[0]->pact = num;
+        pthread_mutex_unlock(&mutex);
         return;
     }
     if (strcmp(args[1], "2") == 0)
@@ -257,7 +269,9 @@ void mppa(serversocket servsock, thinput **threadinput, char** args) //set actua
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
             return; 
         }
+        pthread_mutex_lock(&mutex);
         threadinput[1]->pact = num;
+        pthread_mutex_unlock(&mutex);
         return;
     }
     if (strcmp(args[1], "3") == 0)
@@ -275,12 +289,15 @@ void mppa(serversocket servsock, thinput **threadinput, char** args) //set actua
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
             return; 
         }
+        pthread_mutex_lock(&mutex);
         threadinput[2]->pact = num;
+        pthread_mutex_unlock(&mutex);
         return;
     }
     if (strcmp(args[1], "0") == 0)
     {
         char *end;
+        int i;
         int num = (int)(strtol(args[2], &end, 10));
         if (*end != '\0') {
             snprintf(buf, WORDSIZE, "2nd argument not a number");
@@ -293,9 +310,9 @@ void mppa(serversocket servsock, thinput **threadinput, char** args) //set actua
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
             return; 
         }
-        threadinput[0]->pact = num;
-        threadinput[1]->pact = num;
-        threadinput[2]->pact = num;
+        pthread_mutex_lock(&mutex);
+        for(i=0;i<3;i++) threadinput[i]->pact = num;
+        pthread_mutex_unlock(&mutex);
         return;
     }
     snprintf(buf, WORDSIZE, "1st argument invalid");
@@ -321,7 +338,9 @@ void mppamb(serversocket servsock, thinput **threadinput, char** args) //set act
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
             return; 
         }
+        pthread_mutex_lock(&mutex);
         threadinput[0]->pamb = num;
+        pthread_mutex_unlock(&mutex);
         return;
     }
     if (strcmp(args[1], "2") == 0)
@@ -339,7 +358,9 @@ void mppamb(serversocket servsock, thinput **threadinput, char** args) //set act
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
             return; 
         }
+        pthread_mutex_lock(&mutex);
         threadinput[1]->pamb = num;
+        pthread_mutex_unlock(&mutex);
         return;
     }
     if (strcmp(args[1], "3") == 0)
@@ -357,12 +378,15 @@ void mppamb(serversocket servsock, thinput **threadinput, char** args) //set act
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
             return; 
         }
+        pthread_mutex_lock(&mutex);
         threadinput[2]->pamb = num;
+        pthread_mutex_unlock(&mutex);
         return;
     }
     if (strcmp(args[1], "0") == 0)
     {
         char *end;
+        int i;
         int num = (int)(strtol(args[2], &end, 10));
         if (*end != '\0') {
             snprintf(buf, WORDSIZE, "2nd argument not a number");
@@ -375,9 +399,9 @@ void mppamb(serversocket servsock, thinput **threadinput, char** args) //set act
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
             return; 
         }
-        threadinput[0]->pamb = num;
-        threadinput[1]->pamb = num;
-        threadinput[2]->pamb = num;
+        pthread_mutex_lock(&mutex);
+        for(i=0;i<3;i++) threadinput[i]->pamb = num;
+        pthread_mutex_unlock(&mutex);
         return;
     }
     snprintf(buf, WORDSIZE, "1st argument invalid");

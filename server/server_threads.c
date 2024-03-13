@@ -5,6 +5,7 @@
 
 int tmin = TMIN;
 int tmax = TMAX;
+pthread_mutex_t mutex;
 
 void* thread_sen(void *threadinput) {
     
@@ -50,7 +51,9 @@ void* thread_act (void *threadinput)
       {
         tact = 0;  
       }
+      pthread_mutex_lock(&mutex);
       actbuf->TEMP += tact; 
+      pthread_mutex_unlock(&mutex);
     }
   }
 }
@@ -84,7 +87,9 @@ void* thread_amb (void *threadinput)
         tfixamb = 1;
         }   
       }
+      pthread_mutex_lock(&mutex);
       ambbuf->TEMP += tfixamb + tvaramb;
+      pthread_mutex_unlock(&mutex);
       ambcycle++;
     }
   }
