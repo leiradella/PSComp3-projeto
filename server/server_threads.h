@@ -1,6 +1,8 @@
 #ifndef SISMON_H_
 #define SISMON_H_
 
+#include <pthread.h>
+
 #define NS 3 /* numero de sectores a controlar */
 #define PSEN 5 /* perıodo inicial dos processos sensores (em segundos) */
 #define PACT 8 /* perıodo inicial dos processos actuadores (segundos) */
@@ -13,6 +15,8 @@
 
 extern int tmin;
 extern int tmax;
+
+extern pthread_mutex_t mutex;
 
 typedef struct Threadinputs {
     int TEMP;
