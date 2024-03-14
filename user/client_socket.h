@@ -11,8 +11,8 @@ typedef struct ClientSocket {
   socklen_t addrlen;
   struct sockaddr_un to; //socket do servidor
   socklen_t tolen;
-  char servname[10]; 
-  char cliname[10];
+  char servname[20]; 
+  char cliname[20];
 } clientsocket;
 
 void create_client_socket(struct ClientSocket *soc);

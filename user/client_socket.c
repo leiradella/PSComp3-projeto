@@ -4,13 +4,15 @@
 #include <string.h>
 #include <stdio.h>
 
+#define INTUTI "/tmp/INTUTI"
 #define SISMON "/tmp/SISMON"
+#define REGHIST "/tmp/reghist"
 
 //this creates a socket for the program
 void create_client_socket(struct ClientSocket *soc)
 {
-  strcpy(soc->servname, "/tmp/SERV");
-  strcpy(soc->cliname, SISMON);
+  strcpy(soc->servname, SISMON);
+  strcpy(soc->cliname, INTUTI);
   unlink(soc->cliname);
 
  if ((soc->sd = socket(AF_UNIX, SOCK_DGRAM, 0)) < 0 ) {

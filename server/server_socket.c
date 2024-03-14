@@ -4,10 +4,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define SISMON "/tmp/SISMON"
+
 //this creates a socket for the program
 void sock_create(serversocket *soc)
 {
-  strcpy(soc->servname, "/tmp/SERV");
+  strcpy(soc->servname, SISMON);
   unlink(soc->servname);
 
  if ((soc->sd = socket(AF_UNIX, SOCK_DGRAM, 0)) < 0 ) {
