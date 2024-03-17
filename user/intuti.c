@@ -67,11 +67,11 @@ int main()
             {
                 printf("%s %s\n", commands[i].cmd_name, commands[i].cmd_help);
             }
-        } else if (sendto(clisoc.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&clisoc.to, clisoc.tolen) < 0) perror("CLI: Erro no sendto");
+        } else if (sendto(clisoc.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&clisoc.sis, clisoc.sislen) < 0) perror("CLI: Erro no sendto");
     }
     
     close(clisoc.sd);
-    unlink(clisoc.cliname);
+    unlink(clisoc.usrname);
 
     return 0;
 }
