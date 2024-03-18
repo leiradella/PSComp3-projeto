@@ -12,14 +12,13 @@ pthread_mutex_t mutex;
 void* thread_sen(void *threadinput) {
     
   struct Threadinputs *senbuf = (struct Threadinputs*)threadinput;
-	long double time;
+	long double timenothefunction;
 	clock_t t;
   while(1)
   {
   t = clock();
     if (senbuf->psen != 0)
     {
-      sleep(senbuf->psen);
       if (senbuf->TEMP > tmax) 
       {  
         printf("ABOVE MAX TEMPERATURE\a\n"); 
@@ -29,9 +28,10 @@ void* thread_sen(void *threadinput) {
       {
         printf("BELOW MINIMUM TEMPERATURE\a\n"); 
       }
-   t = clock() - t; 
-   time = ((double)t)/CLOCKS_PER_SEC;  
-   sleep(senbuf->psen - time); 
+     time( &senbuf->regtime  );
+     t = clock() - t; 
+     timenothefunction = ((double)t)/CLOCKS_PER_SEC;
+     sleep(senbuf->psen - timenothefunction);
     }
   }
 }
@@ -47,7 +47,7 @@ void* thread_act (void *threadinput)
   t = clock();
     if (actbuf->pact != 0)
     {
-      sleep(actbuf->pact);
+     
       if (actbuf->tmanip == '+')
       {
         tact = 1;  

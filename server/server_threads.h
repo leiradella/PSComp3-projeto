@@ -25,6 +25,7 @@ typedef struct Threadinputs {
     int pact;
     int pamb;
     int id;
+    time_t regtime;
 } thinput;
 
 void* thread_sen (void *threadinput);
