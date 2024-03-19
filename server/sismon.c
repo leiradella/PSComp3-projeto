@@ -6,17 +6,36 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <mqueue.h>
+
+#define REGQ "/REGQ"
+#define MAX_MSG_SIZE sizeof(registo_queue)
+
+mqd_t mq;
+int variavel_controlo_registo;
 
 int main ()
 {   
   char command[100];
   int i;
-
+  struct mq_attr attr;
   
+  attr.mq_flags = 0;
+  attr.mq_maxmsg = 10;
+  attr.mq_msgsize = MAX_MSG_SIZE;
+  attr.mq_curmsgs = 0;
+
   //criacao do socket
   serversocket servsock;
-  
   sock_create(&servsock);
+
+  // Criando a fila de mensagens
+  mq = mq_open(REGQ, O_CREAT | O_WRONLY, 0666, &attr);
+    if (mq == -1) {
+      perror("Erro na criação da queue \n");
+      exit(1);
+    }
+  variavel_controlo_registo = 1;
 
   // criacao das threads
   thinput *threadinput[NS];
