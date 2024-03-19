@@ -16,9 +16,7 @@ void tsm(serversocket servsock) //server exit
 
     snprintf(buf, WORDSIZE, "Server Closing...");
     if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-    close(servsock.sd);
-    unlink(servsock.servname);
-    exit(0);
+    return;
 }
 
 void cala(serversocket servsock) //see min and max temperatures for alarm
@@ -411,113 +409,112 @@ void mppamb(serversocket servsock, thinput **threadinput, char** args) //set act
 
 void handle_commands(char *command, serversocket servsock, thinput **threadinput)
 {
-    int commandchar = 0; //current character from command string
-    int argchar = 0; //current character from arg string
-    int argword = 0; //current string from string vector
-    int word_num = 0; //how many words in command
+    int j = 0; 
+    int argc = 0;
     char **args;
+    char *token;
     char buf[WORDSIZE];
 
-    args = malloc(MAXWORDS*sizeof(char*));
-    if (args == NULL){ 
-        printf("Erro ao alocar memoria\n");
-        return;
+    // make space for token
+    token = (char *)malloc(sizeof(command)*sizeof(char));
+    if (token == NULL){
+      printf("Erro ao alocar memoria\n");
+      return;
     }
 
-    //go through the whole string
-    while (command[commandchar] != '\0' && command[commandchar] != '\n')
+    // make space for args
+    args = (char **)malloc(MAXWORDS*sizeof(char*));
+    if (args == NULL){
+      printf("Erro ao alocar memoria\n");
+      return;
+    }
+
+    //get first word (command)
+    token = strtok(command, " ");
+
+    //put all words of command into args
+    while(token != NULL)
     {
-        //jump spaces
-        while(command[commandchar] == ' ')
-        {
-            commandchar++;
-        }
-
-        //check if string isnt just a bunch of spaces
-        if ((command[commandchar] == '\0' || command[commandchar] == '\n') && word_num == 0)
-        {
-            snprintf(buf, WORDSIZE,"string is just a bunch of spaces");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return;
-        } else if (command[commandchar] == '\0' || command[commandchar] == '\n') break;
-
-        //make space for word in string vector
-        args[argword] = (char *)malloc(WORDSIZE);
-        if (args[argword] == NULL){
+        args[argc] = (char *)malloc(sizeof(token)*sizeof(char));
+        if (args[argc] == NULL){
             printf("Erro ao alocar memoria\n");
             return;
         }
-
-        argchar = 0;
-        //word has begun
-        while(command[commandchar] != '\0' && command[commandchar] != ' ' && command[commandchar] != '\n')
-        {
-            //fills one string in string vector with word from command
-            args[argword][argchar] = command[commandchar];
-            argchar++;
-            commandchar++;
-        }
-        args[argword][argchar] = '\0'; //worrds ends in EOF
-        argword++;
-        word_num++; //to keep count of how many words
+        strcpy(args[argc], token);
+        token = strtok(NULL, " ");
+        argc++;
     }
 
-    switch(word_num) {
-        case 0:
-            return;
+    switch(argc) {
         case 1:
             if (strcmp(args[0], "tsm") == 0)
             {
                 tsm(servsock);
-                return;
+                
+                close(servsock.sd);
+                unlink(servsock.sisname);
+                for (j = 0; j < argc; j++)
+                {
+                    free(args[j]);
+                }
+                free(args);
+                free(token);
+                exit(0);
             }
             else if (strcmp(args[0], "cala") == 0) {
                 cala(servsock);
-                return;
+                break;
             }
             //if every compare fails, then the command doesnt exist
             snprintf(buf, WORDSIZE, "comando invalido");
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return;
+            break;
         case 2:
             if (strcmp(args[0], "cts") == 0)
             {
                 cts(servsock, threadinput, args);
-                return;
+                break;
             }
             if (strcmp(args[0], "cps") == 0) { 
                 cps(servsock, threadinput, args);
-                return;
+                break;
             }
             //if every compare fails, then the command doesnt exist
             snprintf(buf, WORDSIZE, "comando invalido");
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return;
+            break;
         case 3:
             if (strcmp(args[0], "dala") == 0)
             {
                 dala(servsock, args);
-                return;
+                break;
             }
             if (strcmp(args[0], "mpps") == 0) {
                 mpps(servsock, threadinput, args);
-                return;
+                break;
             }
             if (strcmp(args[0], "mppa") == 0) {
                 mppa(servsock, threadinput, args);
-                return;
+                break;
             }
             if (strcmp(args[0], "mppamb") == 0) {
                 mppamb(servsock, threadinput, args);
-                return;
+                break;
             }
             //if every compare fails, then the command doesnt exist
             snprintf(buf, WORDSIZE, "comando invalido");
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return;
+            break;
         default:
             snprintf(buf, WORDSIZE, "FUCK YOU YOU FUCKING DICK");
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return;
+            break;
     }
+    
+    for (j = 0; j < argc; j++)
+    {
+        free(args[j]);
+    }
+    free(args);
+    free(token);
 }

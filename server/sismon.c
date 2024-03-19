@@ -64,7 +64,7 @@ for (i = 0; i < NS; i++)
   }
 
   close(servsock.sd);
-  unlink(servsock.servname);
+  unlink(servsock.sisname);
 
   return 0;
 }
