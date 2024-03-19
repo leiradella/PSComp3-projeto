@@ -4,20 +4,13 @@
 #include <sys/un.h>
 #include <sys/socket.h>
 
-#define MAXWORDS 50
-
-struct Message {
-  char *argv[MAXWORDS];
-  int argc;
-};
-
 typedef struct ServerSocket {
   int sd;
-  struct sockaddr_un from; //socket user
+  struct sockaddr_un my_addr; //socket do servidor
+  socklen_t addrlen;
+  struct sockaddr_un from; //socket do usuario 
   socklen_t fromlen;
-  struct sockaddr_un sis; //socket do sismon
-  socklen_t sislen;
-  char sisname[20];
+  char servname[10]; 
 } serversocket;
 
 void sock_create(serversocket *soc);

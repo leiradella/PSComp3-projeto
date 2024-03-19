@@ -2,6 +2,7 @@
 #define SISMON_H_
 
 #include <pthread.h>
+#include <mqueue.h>
 
 #define NS 3 /* numero de sectores a controlar */
 #define PSEN 5 /* perıodo inicial dos processos sensores (em segundos) */
@@ -15,8 +16,12 @@
 
 extern int tmin;
 extern int tmax;
+extern int variavel_controlo_registo;
 
 extern pthread_mutex_t mutex;
+
+
+typedef struct timespec timespec_t;
 
 typedef struct Threadinputs {
     int TEMP;
@@ -25,8 +30,13 @@ typedef struct Threadinputs {
     int pact;
     int pamb;
     int id;
-    time_t regtime;
 } thinput;
+
+typedef struct {
+    timespec_t t;
+    int id;
+    int temperatura;
+} registo_queue;
 
 void* thread_sen (void *threadinput);
 

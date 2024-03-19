@@ -9,19 +9,19 @@
 //this creates a socket for the program
 void sock_create(serversocket *soc)
 {
-  strcpy(soc->sisname, SISMON);
-  unlink(soc->sisname);
+  strcpy(soc->servname, SISMON);
+  unlink(soc->servname);
 
  if ((soc->sd = socket(AF_UNIX, SOCK_DGRAM, 0)) < 0 ) {
     perror("Erro a criar socket"); exit(-1);
   }
       
-  soc->sis.sun_family = AF_UNIX;
-  memset(soc->sis.sun_path, 0, sizeof(soc->sis.sun_path));
-  strcpy(soc->sis.sun_path, soc->sisname);
-  soc->sislen = (socklen_t)(sizeof(soc->sis.sun_family) + strlen(soc->sis.sun_path));
+  soc->my_addr.sun_family = AF_UNIX;
+  memset(soc->my_addr.sun_path, 0, sizeof(soc->my_addr.sun_path));
+  strcpy(soc->my_addr.sun_path, soc->servname);
+  soc->addrlen = (socklen_t)(sizeof(soc->my_addr.sun_family) + strlen(soc->my_addr.sun_path));
 
-  if (bind(soc->sd, (struct sockaddr *)&soc->sis, soc->sislen) < 0 ) {
+  if (bind(soc->sd, (struct sockaddr *)&soc->my_addr, soc->addrlen) < 0 ) {
     perror("Erro no bind"); exit(-1);
   }
 

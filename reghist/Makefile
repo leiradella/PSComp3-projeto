@@ -8,16 +8,16 @@ CFLAGS = -Wall -g -pthread
 LDFLAGS= -lrt
 
 #source files
-SRC = sismon.c server_threads.c server_socket.c server_commands.c
+SRC = reghist.c
 
 #header files
-HDR = server_threads.h server_socket.h server_commands.h
+#HDR = server_threads.h server_socket.h server_commands.h #
 
 #object files
 OBJ = $(SRC:.c=.o)
 
-#executable
-EXEC = sismon
+#exe
+EXEC = reghist
 
 #build
 all: $(EXEC)
@@ -33,3 +33,4 @@ $(EXEC): $(OBJ)
 #clean
 clean:
 	rm -f $(OBJ) $(EXEC)
+

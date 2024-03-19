@@ -4,6 +4,8 @@
 #include "server_socket.h"
 #include "server_threads.h"
 
-void handle_commands(char *command, serversocket servsock, thinput **threadinput1);
+#include <mqueue.h>
+
+void handle_commands(char *command, serversocket servsock, thinput **threadinput1, mqd_t mq);
 
 #endif
