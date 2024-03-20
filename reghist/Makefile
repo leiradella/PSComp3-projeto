@@ -4,14 +4,14 @@ CC = gcc
 #compiler flags
 CFLAGS = -Wall -g -pthread
 
-#linker flags
+#queue flag
 LDFLAGS= -lrt
 
 #source files
 SRC = reghist.c
 
 #header files
-#HDR = server_threads.h server_socket.h server_commands.h #
+HDR = reghist.h 
 
 #object files
 OBJ = $(SRC:.c=.o)
