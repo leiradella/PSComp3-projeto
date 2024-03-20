@@ -7,12 +7,20 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <mqueue.h>
+#include <signal.h>
 
 #define REGQ "/REGQ"
 #define MAX_MSG_SIZE sizeof(registo_queue)
 
 mqd_t mq;
 int variavel_controlo_registo;
+int sigterm_signal = 0;
+
+// Signal handler function
+void sighand(int signum) {
+    printf("Received SIGTERM signal (%d). Exiting...\n", signum);
+    sigterm_signal = 1;
+}
 
 int main ()
 {   
@@ -24,6 +32,9 @@ int main ()
   attr.mq_maxmsg = 10;
   attr.mq_msgsize = MAX_MSG_SIZE;
   attr.mq_curmsgs = 0;
+
+  // criacao do signal
+  signal(SIGTERM, sighand);
 
   //criacao do socket
   serversocket servsock;
@@ -74,7 +85,7 @@ for (i = 0; i < NS; i++)
     printf("Erro a criar thread ambiente"); 
   } 
  }
-  while (1)
+  while (!sigterm_signal)
   { 
     if (recvfrom(servsock.sd, command, sizeof(command), 0, (struct sockaddr *)&servsock.from, &servsock.fromlen) < 0) {
     perror("Erro no recvfrom");
