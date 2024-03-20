@@ -8,9 +8,18 @@
 #include <mqueue.h>
 #include <string.h>
 #include <time.h>
+#include <sys/types.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <string.h>
 
-#define REGQ "/REGQ"
+#define REGS "/tmp/REGS"                    /* nome do registo historico (socket) */
+#define REGQ "/REGQ"                        /* nome do registo historico (queue) */
 #define MAX_MSG_SIZE sizeof(reg_t)
+#define NREG 200                            /* numero maximo de registos no ficheiro */
+#define DADOS "HISTORICO.LOG"               /* ficheiro com registo historico */
+
 
 typedef struct timespec timespec_t;
 
