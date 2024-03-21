@@ -7,27 +7,49 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <mqueue.h>
+#include <signal.h>
+#include <errno.h>
+#include <sys/time.h>
 
 #define REGQ "/REGQ"
 #define MAX_MSG_SIZE sizeof(registo_queue)
+#define TIMEOUT_SEC 5
 
 mqd_t mq;
 int variavel_controlo_registo;
+int sigterm_signal = 0;
+
+// Signal handler function
+void sighand(int signum) {
+  printf("Received SIGTERM signal (%d). Server Exiting...\n", signum);
+  sigterm_signal = 1;
+}
 
 int main ()
 {   
   char command[100];
   int i;
   struct mq_attr attr;
+  struct timeval timeout = {TIMEOUT_SEC, 0};
+  ssize_t msg_status;
   
   attr.mq_flags = 0;
   attr.mq_maxmsg = 10;
   attr.mq_msgsize = MAX_MSG_SIZE;
   attr.mq_curmsgs = 0;
 
+  // criacao do signal
+  signal(SIGTERM, sighand);
+
   //criacao do socket
   serversocket servsock;
   sock_create(&servsock);
+
+  if (setsockopt(servsock.sd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) < 0) {
+    perror("setsockopt failed");
+    exit(EXIT_FAILURE);
+  }
+  
 
   // Criando a fila de mensagens
   mq = mq_open(REGQ, O_CREAT | O_WRONLY, 0666, &attr);
@@ -74,14 +96,26 @@ for (i = 0; i < NS; i++)
     printf("Erro a criar thread ambiente"); 
   } 
  }
-  while (1)
+  while (!sigterm_signal)
   { 
-    if (recvfrom(servsock.sd, command, sizeof(command), 0, (struct sockaddr *)&servsock.from, &servsock.fromlen) < 0) {
-    perror("Erro no recvfrom");
+    // n stores recvfrom value to check if it was succesful or not
+    msg_status = recvfrom(servsock.sd, command, sizeof(command), 0, (struct sockaddr *)&servsock.from, &servsock.fromlen);
+    
+    //if msg_status < 0, then an error ocurred, now we check if the error is related to the timeout, we dont want sismon to keep printing timeout so we just commented it
+    if (msg_status < 0 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
+      //printf("timeout\n");
+    } else if (msg_status < 0) {
+      perror("Erro no recvfrom:");
+    } else {  
+      handle_commands(command, servsock, threadinput);
     }
-    handle_commands(command, servsock, threadinput);
   }
 
+  for (i = 0; i < NS; i++)
+  {
+    free(threadinput[i]);
+  }
+  mq_close(mq);
   close(servsock.sd);
   unlink(servsock.sisname);
 

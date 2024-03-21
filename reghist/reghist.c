@@ -35,12 +35,11 @@ void* recebe_dados(void *ficheiro) {
       if (a == -1) {
         perror("Error mq_open");
         exit(1);
-      }
-    
-    while (1) 
-    {
-      // Recebendo a estrutura de dados do servidor
-      if (mq_receive(a, (char*)&registo, sizeof(reg_t), NULL) == -1) {
+    }
+  while (!sigterm_signal)
+  {
+    // Recebendo a estrutura de dados do servidor
+    if (mq_receive(mq, (char*)&registro, MAX_MSG_SIZE + 1, NULL) == -1) {
         perror("mq_receive");
         pthread_exit(NULL);
       }
