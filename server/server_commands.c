@@ -9,6 +9,7 @@
 #define WORDSIZE 100
 #define MAXWORDS 50
 
+extern int variavel_controlo_registo;
 
 void tsm(serversocket servsock) //server exit
 {
@@ -138,6 +139,51 @@ void dala(serversocket servsock, char** args) //change min and max temp for alar
     tmin = num1;
     tmax = num2;
     pthread_mutex_unlock(&mutex);
+}
+
+void cer (serversocket servsock)
+{
+    char buf[WORDSIZE];
+
+    if (variavel_controlo_registo == 1)
+    {
+    snprintf(buf, WORDSIZE, "Envio para o registo esta ativo\n");
+    if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+    }
+    else {
+        snprintf(buf, WORDSIZE, "Envio para o registo esta desativado\n");
+        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+    }  
+}
+
+void aer(serversocket servsock)
+{
+    char buf[WORDSIZE];
+    
+    if (variavel_controlo_registo == 1)
+    {
+        snprintf(buf, WORDSIZE, "Envio para o registo ja esta ativo\n");
+        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+    } else {
+        variavel_controlo_registo = 1;
+        snprintf(buf, WORDSIZE, "Envio para o registo ativado\n");
+        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+    }
+}
+
+void der(serversocket servsock)
+{
+    char buf[WORDSIZE];
+    
+    if (variavel_controlo_registo == 0)
+    {
+        snprintf(buf, WORDSIZE, "Envio para o registo ja esta desativado\n");
+        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+    } else {
+        variavel_controlo_registo = 0;
+        snprintf(buf, WORDSIZE, "Envio para o registo desativado\n");
+        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+    }
 }
 
 void mpps(serversocket servsock, thinput **threadinput, char** args) //set sensor period time
@@ -465,6 +511,18 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
                 cala(servsock);
                 break;
             }
+            else if (strcmp(args[0], "cer") == 0) {
+                cer(servsock);
+                break;
+            }
+            else if (strcmp(args[0], "aer") == 0) {
+                aer(servsock);
+                break;
+            }
+            else if (strcmp(args[0], "der") == 0) {
+                der(servsock);
+                break;
+            }
             //if every compare fails, then the command doesnt exist
             snprintf(buf, WORDSIZE, "comando invalido");
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
@@ -506,7 +564,7 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
             break;
         default:
-            snprintf(buf, WORDSIZE, "FUCK YOU YOU FUCKING DICK");
+            snprintf(buf, WORDSIZE, "Sismon: Comando invalido (argc = %d)", argc);
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
             break;
     }

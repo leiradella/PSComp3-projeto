@@ -4,6 +4,9 @@ CC = gcc
 #compiler flags
 CFLAGS = -Wall -g -pthread
 
+#queue flag
+LDFLAGS= -lrt
+
 #source files
 SRC = sismon.c server_threads.c server_socket.c server_commands.c
 
@@ -21,7 +24,7 @@ all: $(EXEC)
 
 #linking
 $(EXEC): $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 #compilation
 %.o: %.c
