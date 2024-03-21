@@ -31,7 +31,6 @@ void* thread_sen(void *threadinput) {
      t = clock() - t; 
      timenothefunction = ((double)t)/CLOCKS_PER_SEC;
      sleep(senbuf->psen - timenothefunction);
-     time(&senbuf->regtime);
     }
   }
 }
