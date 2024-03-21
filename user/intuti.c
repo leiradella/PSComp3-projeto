@@ -109,7 +109,7 @@ void send_command(char *command, clientsocket clisoc)
 
     switch (argc) {
         case 1:
-            if(strcmp(arg1, "tsm") == 0)
+            if(strcmp(arg1, "tsm") == 0 || strcmp(arg1, "cala") == 0 || strcmp(arg1, "cer") == 0 || strcmp(arg1, "aer") == 0 || strcmp(arg1, "der") == 0)
             {
                 if (sendto(clisoc.sd, message, strlen(message)+1, 0, (struct sockaddr *)&clisoc.sis, clisoc.sislen) < 0) perror("CLI: Erro no sendto");
                 break;
@@ -117,12 +117,9 @@ void send_command(char *command, clientsocket clisoc)
             else if(strcmp(arg1, "sair") == 0)
             {
                 printf("Client closing...\n");
+                free(message);
+                free(arg1);
                 exit(0);        
-            }
-            else if(strcmp(arg1, "cala") == 0)
-            {
-                if (sendto(clisoc.sd, message, strlen(message)+1, 0, (struct sockaddr *)&clisoc.sis, clisoc.sislen) < 0) perror("CLI: Erro no sendto");
-                break;
             }
             else if(strcmp(arg1, "sos") == 0 || strcmp(arg1, "help") == 0)
             {

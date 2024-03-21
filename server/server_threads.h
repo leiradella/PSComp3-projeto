@@ -34,8 +34,8 @@ typedef struct Threadinputs {
 
 typedef struct {
     timespec_t t;
-    int id;
     int temperatura;
+    int id;
 } registo_queue;
 
 void* thread_sen (void *threadinput);
