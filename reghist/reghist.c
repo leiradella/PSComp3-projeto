@@ -2,8 +2,18 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <mqueue.h>
+#include <sys/time.h>
 #include "reghist.h"
 
+#define TIMEOUT_SEC 5
+
+int sigterm_signal = 0;
+
+// Signal handler function
+void sighand(int signum) {
+  printf("Received SIGTERM signal (%d). Reghist Exiting...\n", signum);
+  sigterm_signal = 1;
+}
 
 void imprimirDataHora(long int segundos, long int nanosegundos) {
     struct tm *infoTempo;
@@ -27,19 +37,19 @@ void imprimirDataHora(long int segundos, long int nanosegundos) {
 
 void* recebe_dados(void *ficheiro) {
   
-  mqd_t a;
+  mqd_t mq;
   reg_t registo;
   
     // Open queue
-    a = mq_open(REGQ, O_RDONLY);
-      if (a == -1) {
+    mq = mq_open(REGQ, O_RDONLY);
+      if (mq == -1) {
         perror("Error mq_open");
         exit(1);
     }
-  while (!sigterm_signal)
+  while (1)
   {
     // Recebendo a estrutura de dados do servidor
-    if (mq_receive(mq, (char*)&registro, MAX_MSG_SIZE + 1, NULL) == -1) {
+    if (mq_receive(mq, (char*)&registo, MAX_MSG_SIZE + 1, NULL) == -1) {
         perror("mq_receive");
         pthread_exit(NULL);
       }
@@ -80,7 +90,7 @@ int main() {
       perror("Error thread\n");
       return 1;
     }
-    while (1) 
+    while (!sigterm_signal) 
     {
     
     
