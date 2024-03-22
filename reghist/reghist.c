@@ -39,13 +39,23 @@ void* recebe_dados(void *ficheiro) {
   
   mqd_t mq;
   reg_t registo;
-  
+  reg_t *mmap_registo;
+  int ficheiro_registo = *((int*)ficheiro);
+  int i=0;
+
     // Open queue
     mq = mq_open(REGQ, O_RDONLY);
       if (mq == -1) {
         perror("Error mq_open");
         exit(1);
     }
+    
+    // Mapear o arquivo na memória
+    if ((mmap_registo = mmap(NULL, NREG*sizeof(reg_t), PROT_READ | PROT_WRITE, MAP_SHARED, ficheiro_registo , 0)) == MAP_FAILED) {
+        perror("Erro em mmap");
+        exit(-1);
+    }
+       
   while (1)
   {
     // Recebendo a estrutura de dados do servidor
@@ -53,14 +63,16 @@ void* recebe_dados(void *ficheiro) {
         perror("mq_receive");
         pthread_exit(NULL);
       }
-
-      // Exibindo a estrutura de dados recebida
-      printf("Registro recebido do servidor:\n");
-      imprimirDataHora(registo.t.tv_sec, registo.t.tv_nsec);
-      printf("Setor: %d\n", registo.s);
-      printf("Temperatura: %d\n", registo.temperatura);
-      printf("\n \n \n \n \n");
-      }
+  
+    mmap_registo[i].s = registo.s;
+    mmap_registo[i].temperatura = registo.temperatura;
+    mmap_registo[i].t.tv_sec = registo.t.tv_sec;
+    mmap_registo[i].t.tv_sec = registo.t.tv_sec;
+    
+    if(i>=NREG){
+       i=0;
+    }
+  }
 }
 
 int main() {   
@@ -84,7 +96,7 @@ int main() {
             exit(-1);
         }
       }
-       
+
     // Create thread
     if (pthread_create(&recebe_dados_sismon, NULL, recebe_dados, (void *)&mfd) != 0) {
       perror("Error thread\n");
@@ -94,7 +106,7 @@ int main() {
     {
     
     
-    
+    printf("")
     
     
     
