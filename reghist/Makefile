@@ -8,10 +8,10 @@ CFLAGS = -Wall -g -pthread
 LDFLAGS= -lrt
 
 #source files
-SRC = reghist.c
+SRC = reghist.c reghist_socket.c reghist_commands.c
 
 #header files
-HDR = reghist.h 
+HDR = reghist.h reghist_socket.h reghist_commands.h
 
 #object files
 OBJ = $(SRC:.c=.o)

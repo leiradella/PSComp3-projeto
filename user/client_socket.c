@@ -13,6 +13,7 @@ void create_client_socket(struct ClientSocket *soc)
 {
   strcpy(soc->sisname, SISMON);
   strcpy(soc->usrname, INTUTI);
+  strcpy(soc->regname, REGHIST);
   unlink(soc->usrname);
 
  if ((soc->sd = socket(AF_UNIX, SOCK_DGRAM, 0)) < 0 ) {

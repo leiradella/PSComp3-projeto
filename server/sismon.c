@@ -12,6 +12,7 @@
 #include <sys/time.h>
 
 #define REGQ "/REGQ"
+#define WORDSIZE 100
 #define MAX_MSG_SIZE sizeof(registo_queue)
 #define TIMEOUT_SEC 5
 
@@ -27,7 +28,7 @@ void sighand(int signum) {
 
 int main ()
 {   
-  char command[100];
+  char command[WORDSIZE];
   int i;
   struct mq_attr attr;
   struct timeval timeout = {TIMEOUT_SEC, 0};
@@ -45,11 +46,11 @@ int main ()
   serversocket servsock;
   sock_create(&servsock);
 
+  // Set timeout option for recvfrom
   if (setsockopt(servsock.sd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) < 0) {
     perror("setsockopt failed");
     exit(EXIT_FAILURE);
   }
-  
 
   // Criando a fila de mensagens
   mq = mq_open(REGQ, O_CREAT | O_WRONLY, 0666, &attr);
@@ -98,7 +99,7 @@ for (i = 0; i < NS; i++)
  }
   while (!sigterm_signal)
   { 
-    // n stores recvfrom value to check if it was succesful or not
+    // msg_status stores recvfrom value to check if it was succesful or not
     msg_status = recvfrom(servsock.sd, command, sizeof(command), 0, (struct sockaddr *)&servsock.from, &servsock.fromlen);
     
     //if msg_status < 0, then an error ocurred, now we check if the error is related to the timeout, we dont want sismon to keep printing timeout so we just commented it

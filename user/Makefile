@@ -5,10 +5,10 @@ CC = gcc
 CFLAGS = -Wall -g -pthread
 
 #source files
-SRC = intuti.c client_socket.c
+SRC = intuti.c client_socket.c client_commands.c
 
 #header files
-HDR = client_socket.h
+HDR = client_socket.h client_commands.h
 
 #object files
 OBJ = $(SRC:.c=.o)

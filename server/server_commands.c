@@ -1,5 +1,6 @@
 #include "server_socket.h"
 #include "server_threads.h"
+#include "server_commands.h"
 #include <sys/socket.h>
 #include <ctype.h>
 #include <unistd.h>
@@ -455,18 +456,9 @@ void mppamb(serversocket servsock, thinput **threadinput, char** args) //set act
 
 void handle_commands(char *command, serversocket servsock, thinput **threadinput)
 {
-    int j = 0; 
-    int argc = 0;
-    char **args;
-    char *token;
-    char buf[WORDSIZE];
-
-    // make space for token
-    token = (char *)malloc(sizeof(command)*sizeof(char));
-    if (token == NULL){
-      printf("Erro ao alocar memoria\n");
-      return;
-    }
+    int i = 0, argc = 0;
+    static int handler = HANDLER1; 
+    char **args, *token;
 
     // make space for args
     args = (char **)malloc(MAXWORDS*sizeof(char*));
@@ -491,88 +483,210 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
         argc++;
     }
 
-    switch(argc) {
+    if (handler == HANDLER1) handler1(args, argc, &handler, threadinput, servsock);
+    else if (handler == HANDLER2) handler2(args, argc, &handler,threadinput, servsock);
+
+
+    
+    for (i = 0; i < argc; i++)
+    {
+        free(args[i]);
+    }
+    free(args);
+}
+
+
+void handler1(char **args, int argc, int *handler, thinput **threadinput, serversocket servsock)
+{
+    int id, i;
+    char buf[WORDSIZE];
+
+    //get the command id
+    id = (int)strtol(args[0], NULL, 10);
+
+    switch (argc) {
         case 1:
-            if (strcmp(args[0], "tsm") == 0)
-            {
+            switch (id) {
+                case TSM:
                 tsm(servsock);
-                
                 close(servsock.sd);
                 unlink(servsock.sisname);
-                for (j = 0; j < argc; j++)
+                for (i = 0; i < argc; i++)
                 {
-                    free(args[j]);
+                    free(args[i]);
                 }
                 free(args);
-                free(token);
                 exit(0);
-            }
-            else if (strcmp(args[0], "cala") == 0) {
-                cala(servsock);
-                break;
-            }
-            else if (strcmp(args[0], "cer") == 0) {
-                cer(servsock);
-                break;
-            }
-            else if (strcmp(args[0], "aer") == 0) {
-                aer(servsock);
-                break;
-            }
-            else if (strcmp(args[0], "der") == 0) {
-                der(servsock);
-                break;
-            }
-            //if every compare fails, then the command doesnt exist
-            snprintf(buf, WORDSIZE, "comando invalido");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+                case CALA:
+                    cala(servsock);
+                    break;
+                case CER:
+                    cer(servsock);
+                    break;
+                case AER:
+                    aer(servsock);
+                    break;
+                case DER:
+                    der(servsock);
+                    break;
+                default:
+                    //if every compare fails, then the command doesnt exist
+                    snprintf(buf, WORDSIZE, "Sismon: comando invalido(argc = %d)", argc);
+                    if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+            }   
             break;
         case 2:
-            if (strcmp(args[0], "cts") == 0)
-            {
-                cts(servsock, threadinput, args);
-                break;
+            switch (id) {
+                case MODE:
+                    set_mode(args, handler, servsock);
+                    break;
+                case CPS:
+                    cps(servsock, threadinput, args);
+                    break;
+                case CTS:
+                    cts(servsock, threadinput, args);
+                    break;
+                default:
+                    //if every compare fails, then the command doesnt exist
+                    snprintf(buf, WORDSIZE, "Sismon: comando invalido(argc = %d)", argc);
+                    if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
             }
-            if (strcmp(args[0], "cps") == 0) { 
-                cps(servsock, threadinput, args);
-                break;
-            }
-            //if every compare fails, then the command doesnt exist
-            snprintf(buf, WORDSIZE, "comando invalido");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
             break;
         case 3:
-            if (strcmp(args[0], "dala") == 0)
-            {
-                dala(servsock, args);
-                break;
-            }
-            if (strcmp(args[0], "mpps") == 0) {
-                mpps(servsock, threadinput, args);
-                break;
-            }
-            if (strcmp(args[0], "mppa") == 0) {
-                mppa(servsock, threadinput, args);
-                break;
-            }
-            if (strcmp(args[0], "mppamb") == 0) {
-                mppamb(servsock, threadinput, args);
-                break;
-            }
-            //if every compare fails, then the command doesnt exist
-            snprintf(buf, WORDSIZE, "comando invalido");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+            switch (id) {
+                case DALA:
+                    dala(servsock, args);
+                    break;
+                case MPPS: 
+                    mpps(servsock, threadinput, args);
+                    break;
+                case MPPA:
+                    mpps(servsock, threadinput, args);
+                    break;
+                case MPPAMB:
+                    mpps(servsock, threadinput, args);
+                    break;
+                default:
+                    //if every compare fails, then the command doesnt exist
+                    snprintf(buf, WORDSIZE, "Sismon: comando invalido(argc = %d)", argc);
+                    if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+            }  
             break;
         default:
             snprintf(buf, WORDSIZE, "Sismon: Comando invalido (argc = %d)", argc);
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
             break;
     }
-    
-    for (j = 0; j < argc; j++)
-    {
-        free(args[j]);
+}
+
+void handler2(char **args, int argc, int *handler, thinput **threadinput, serversocket servsock)
+{
+    int i;
+    char buf[WORDSIZE];
+
+    switch(argc) {
+    case 1:
+        if (strcmp(args[0], "tsm") == 0)
+        {
+            tsm(servsock);
+            close(servsock.sd);
+            unlink(servsock.sisname);
+            for (i = 0; i < argc; i++)
+            {
+                free(args[i]);
+            }
+            free(args);
+            exit(0);
+        }
+        else if (strcmp(args[0], "cala") == 0) {
+            cala(servsock);
+            break;
+        }
+        else if (strcmp(args[0], "cer") == 0) {
+            cer(servsock);
+            break;
+        }
+        else if (strcmp(args[0], "aer") == 0) {
+            aer(servsock);
+            break;
+        }
+        else if (strcmp(args[0], "der") == 0) {
+            der(servsock);
+            break;
+        }
+        //if every compare fails, then the command doesnt exist
+        snprintf(buf, WORDSIZE, "Sismon: comando invalido (argc = %d)", argc);
+        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+        break;
+    case 2:
+        if(strcmp(args[0], "mode") == 0)
+        {
+            set_mode(args, handler, servsock);
+            break;
+        }
+        if (strcmp(args[0], "cts") == 0)
+        {
+            cts(servsock, threadinput, args);
+            break;
+        }
+        if (strcmp(args[0], "cps") == 0) { 
+            cps(servsock, threadinput, args);
+            break;
+        }
+        //if every compare fails, then the command doesnt exist
+        snprintf(buf, WORDSIZE, "Sismon: comando invalido (argc = %d)", argc);
+        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+        break;
+    case 3:
+        if (strcmp(args[0], "dala") == 0)
+        {
+            dala(servsock, args);
+            break;
+        }
+        if (strcmp(args[0], "mpps") == 0) {
+            mpps(servsock, threadinput, args);
+            break;
+        }
+        if (strcmp(args[0], "mppa") == 0) {
+            mppa(servsock, threadinput, args);
+            break;
+        }
+        if (strcmp(args[0], "mppamb") == 0) {
+            mppamb(servsock, threadinput, args);
+            break;
+        }
+        //if every compare fails, then the command doesnt exist
+        snprintf(buf, WORDSIZE, "Sismon: comando invalido(argc = %d)", argc);
+        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+        break;
+    default:
+        snprintf(buf, WORDSIZE, "Sismon: Comando invalido (argc = %d)", argc);
+        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+        break;
     }
-    free(args);
-    free(token);
+}
+
+void set_mode(char **args, int *handler, serversocket servsock)
+{
+    int num;
+    char buf[WORDSIZE];
+
+    num = (int)strtol(args[1], NULL, 10);
+
+    if (num != 1 && num != 2)
+    {
+        snprintf(buf, WORDSIZE, "Sismon: Invalid mode: %d\n", num);
+        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+        return;
+    }
+
+    if (num == (*handler))
+    {
+        snprintf(buf, WORDSIZE, "Sismon: Modo %d ja esta ativo\n", num);
+        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+    } else {
+        (*handler) = num;
+        snprintf(buf, WORDSIZE, "Sismon: Modo %d ativo\n", num);
+        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+    }
 }
