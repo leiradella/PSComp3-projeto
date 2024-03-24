@@ -690,3 +690,26 @@ void set_mode(char **args, int *handler, serversocket servsock)
         if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
     }
 }
+
+//checks if reghist is running. if not, then starts reghist
+void check_reghist(char *pname, int *vcr)
+{
+    char command[WORDSIZE];
+    pid_t pid;
+
+    snprintf(command, WORDSIZE, "ps -C %s > /dev/null", pname);
+    
+    if (system(command) != 0)
+    {
+        snprintf(command, WORDSIZE, "../reghist/reghist");
+        
+        //create child
+        pid = fork();
+        if (pid == 0)
+        {
+            //sacrifice the child
+            execl(command, NULL);
+        }
+    }
+    
+}

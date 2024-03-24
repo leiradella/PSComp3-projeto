@@ -54,11 +54,12 @@ int main ()
 
   // Criando a fila de mensagens
   mq = mq_open(REGQ, O_CREAT | O_WRONLY, 0666, &attr);
-    if (mq == -1) {
-      perror("Erro na criação da queue \n");
-      exit(1);
-    }
-  variavel_controlo_registo = 1;
+  if (mq == -1) {
+    perror("Erro na criação da queue \n");
+    exit(1);
+  }
+  
+  check_reghist("reghist", &variavel_controlo_registo);
 
   // criacao das threads
   thinput *threadinput[NS];

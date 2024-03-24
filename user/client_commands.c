@@ -44,6 +44,13 @@ void send_command(char *command, clientsocket clisoc)
     //remove \n from the string
     command[strlen(command)-1] = '\0';
 
+    //check if message is just spaces
+    token = strtok(command, " ");
+    if (token == NULL)
+    {
+        return;
+    }
+
     //get space for arg1
     arg1 = (char *)malloc(sizeof(command)*sizeof(char));
     if (arg1 == NULL){
@@ -61,28 +68,14 @@ void send_command(char *command, clientsocket clisoc)
     //clean message
     strcpy(message, "");
 
-    //check if message is just spaces
-    token = strtok(command, " ");
-    if (token == NULL)
-    {
-        return;
-    }
-
     if (handler == HANDLER1) handler1(message, token, arg1, &handler, clisoc);
     else if (handler == HANDLER2) handler2(message, token, arg1, &handler, clisoc);
-
-    // after all this we have:
-    // argc with the number of args for switch case 
-    // message with a standard format of "command argument argument ... argument argc" or "argument_id argument argument argument"
-    // arg1 which has just the command for strcmp
-
-    
 
     free(message);
     free(arg1);
 }
 
-//this function sends message to the server as "command argument argument ... argument"
+//this function sends message to the server as "command_id argument argument ... argument"
 void handler1(char *message, char *token, char *arg1, int *handler,clientsocket clisoc)
 {
     //char *temp;

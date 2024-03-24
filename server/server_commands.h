@@ -39,4 +39,6 @@ void handler1(char **args, int argc, int *handler, thinput **threadinput, server
 void handler2(char **args, int argc, int *handler, thinput **threadinput, serversocket servsock);
 void set_mode(char **args, int *handler, serversocket servsock);
 
+void check_reghist(char *pname, int *vcr);
+
 #endif

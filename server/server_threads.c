@@ -47,7 +47,7 @@ void* thread_sen(void *threadinput) {
       } 
       t = clock() - t; 
       timenothefunction = ((double)t)/CLOCKS_PER_SEC;
-      sleep(senbuf->psen - timenothefunction);
+      sleep((unsigned int)(senbuf->psen - timenothefunction));
       time(&senbuf->regtime);
     }
   }
@@ -83,7 +83,7 @@ void* thread_act (void *threadinput)
     }
     t = clock() - t; 
    time = ((double)t)/CLOCKS_PER_SEC;
-   sleep(actbuf->pact - time);  
+   sleep((unsigned int)(actbuf->pact - time));  
   }
 }
 
@@ -126,6 +126,6 @@ void* thread_amb (void *threadinput)
     }
     t = clock() - t; 
    time = ((double)t)/CLOCKS_PER_SEC;
-   sleep(ambbuf->pamb - time);  
+   sleep((unsigned int)(ambbuf->pamb - time));  
   }
 } 
