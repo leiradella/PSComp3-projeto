@@ -10,7 +10,7 @@
 // INTUTI COMMAND ID DEFINES
 #define SAIR 0
 #define HELP 1
-#define MODE 2
+#define MODO 2
 
 // SISMON COMMAND ID DEFINES
 #define TSM 3

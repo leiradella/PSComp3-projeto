@@ -58,7 +58,7 @@ void handle_commands(char *pa, reg_t registo, char *command, regsocket soc)
         argc++;
     }
     
-    id = strtol(args[0], NULL, 10);
+    id = (int)strtol(args[0], NULL, 10);
     //if the first word inst a valid id for a reghist command, then it must be a string command
     if (id != LREG && id != TRH)
     {

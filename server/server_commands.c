@@ -456,9 +456,8 @@ void mppamb(serversocket servsock, thinput **threadinput, char** args) //set act
 
 void handle_commands(char *command, serversocket servsock, thinput **threadinput)
 {
-    int i = 0, argc = 0;
-    static int handler = HANDLER1; 
-    char **args, *token;
+        char *token, **args;
+    int id, argc = 0;
 
     // make space for args
     args = (char **)malloc(MAXWORDS*sizeof(char*));
@@ -467,14 +466,15 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
       return;
     }
 
-    //get first word (command)
+    //get first word of string (the command)
     token = strtok(command, " ");
-
-    //put all words of command into args
-    while(token != NULL)
+    
+    //put all words of commands in args
+    while (token != NULL)
     {
-        args[argc] = (char *)malloc(sizeof(token)*sizeof(char));
-        if (args[argc] == NULL){
+        //make space for current word
+        args[argc] = (char *)malloc(WORDSIZE*sizeof(char));
+        if (args == NULL){
             printf("Erro ao alocar memoria\n");
             return;
         }
@@ -482,21 +482,25 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
         token = strtok(NULL, " ");
         argc++;
     }
-
-    if (handler == HANDLER1) handler1(args, argc, &handler, threadinput, servsock);
-    else if (handler == HANDLER2) handler2(args, argc, &handler,threadinput, servsock);
-
-
     
-    for (i = 0; i < argc; i++)
+    id = (int)strtol(args[0], NULL, 10);
+    //if the first word inst a valid id for a reghist command, then it must be a string command
+    if (id == 0)
+    {
+        handler2(args, argc, threadinput, servsock);
+    } else {
+        handler1(args, argc, threadinput, servsock);
+    }
+    
+    //free mallocs
+    for(int i = 0; i < argc; i++)
     {
         free(args[i]);
     }
     free(args);
 }
 
-
-void handler1(char **args, int argc, int *handler, thinput **threadinput, serversocket servsock)
+void handler1(char **args, int argc, thinput **threadinput, serversocket servsock)
 {
     int id, i;
     char buf[WORDSIZE];
@@ -537,9 +541,6 @@ void handler1(char **args, int argc, int *handler, thinput **threadinput, server
             break;
         case 2:
             switch (id) {
-                case MODE:
-                    set_mode(args, handler, servsock);
-                    break;
                 case CPS:
                     cps(servsock, threadinput, args);
                     break;
@@ -579,7 +580,7 @@ void handler1(char **args, int argc, int *handler, thinput **threadinput, server
     }
 }
 
-void handler2(char **args, int argc, int *handler, thinput **threadinput, serversocket servsock)
+void handler2(char **args, int argc, thinput **threadinput, serversocket servsock)
 {
     int i;
     char buf[WORDSIZE];
@@ -619,11 +620,6 @@ void handler2(char **args, int argc, int *handler, thinput **threadinput, server
         if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
         break;
     case 2:
-        if(strcmp(args[0], "mode") == 0)
-        {
-            set_mode(args, handler, servsock);
-            break;
-        }
         if (strcmp(args[0], "cts") == 0)
         {
             cts(servsock, threadinput, args);
@@ -666,39 +662,14 @@ void handler2(char **args, int argc, int *handler, thinput **threadinput, server
     }
 }
 
-void set_mode(char **args, int *handler, serversocket servsock)
-{
-    int num;
-    char buf[WORDSIZE];
-
-    num = (int)strtol(args[1], NULL, 10);
-
-    if (num != 1 && num != 2)
-    {
-        snprintf(buf, WORDSIZE, "Sismon: Invalid mode: %d\n", num);
-        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-        return;
-    }
-
-    if (num == (*handler))
-    {
-        snprintf(buf, WORDSIZE, "Sismon: Modo %d ja esta ativo\n", num);
-        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-    } else {
-        (*handler) = num;
-        snprintf(buf, WORDSIZE, "Sismon: Modo %d ativo\n", num);
-        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-    }
-}
-
 //checks if reghist is running. if not, then starts reghist
-void check_reghist(char *pname, int *vcr)
+void check_reghist()
 {
     char command[WORDSIZE];
     pid_t pid;
-
-    snprintf(command, WORDSIZE, "ps -C %s > /dev/null", pname);
     
+    snprintf(command, WORDSIZE, "ps -C reghist > /dev/null");
+
     if (system(command) != 0)
     {
         snprintf(command, WORDSIZE, "../reghist/reghist");
@@ -708,7 +679,7 @@ void check_reghist(char *pname, int *vcr)
         if (pid == 0)
         {
             //sacrifice the child
-            execl(command, NULL);
+            execl(command, command, NULL);
         }
     }
     

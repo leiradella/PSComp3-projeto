@@ -7,7 +7,7 @@ const struct command_d commands[] = {
   {"sos",              "                    -help"},
   {"help",             "                    -help"},
   {"sair",             "                    -sair da interface do usuario"},
-  {"mode m",           "                    -define o modo como a mensagem e enviada ao server (1 = command_id, 2 = command string)"},
+  {"modo m",           "                    -define o modo como a mensagem e enviada ao server (1 = command_id, 2 = command string)"},
   {"tsm",              "                    -terminar servidor"},
   {"trh",              "                    -terminar registo"},
   {"cts s",            "                    -cosnulta temperatura do setor s (0 = todos setores)"},
@@ -91,8 +91,8 @@ void handler1(char *message, char *token, char *arg1, int *handler,clientsocket 
         id = HELP;
     } else if (strcmp(arg1, "tsm") == 0) {
         id = TSM; 
-    } else if (strcmp(arg1, "mode") == 0) {
-        id = MODE;
+    } else if (strcmp(arg1, "modo") == 0) {
+        id = MODO;
     } else if (strcmp(arg1, "cala") == 0) {
         id = CALA;
     } else if (strcmp(arg1, "cer") == 0) {
@@ -169,8 +169,7 @@ void handler1(char *message, char *token, char *arg1, int *handler,clientsocket 
             break;
         case 2: 
             switch (id) {
-                case MODE:
-                    if (sendto(clisoc.sd, message, strlen(message)+1, 0, (struct sockaddr *)&clisoc.sis, clisoc.sislen) < 0) perror("CLI: Erro no sendto");
+                case MODO:
                     set_mode(message, handler);
                     break; 
                 case CPS:
@@ -266,9 +265,8 @@ void handler2(char *message, char *token, char *arg1, int *handler, clientsocket
             printf("Intuti: comando invalido (argc = %d)\n", argc);
             break;
         case 2:
-            if(strcmp(arg1, "mode") == 0)
+            if(strcmp(arg1, "modo") == 0)
             {
-                if (sendto(clisoc.sd, message, strlen(message)+1, 0, (struct sockaddr *)&clisoc.sis, clisoc.sislen) < 0) perror("CLI: Erro no sendto");
                 set_mode(message, handler);
                 break;
             }
@@ -324,9 +322,9 @@ void set_mode(char *message, int *handler)
 
     if (num == (*handler))
     {
-        printf("Intuti: modo %d ja esta ativo\n", num);
+        printf("modo %d ja esta ativo\n", num);
     } else {
         (*handler) = num;
-        printf("Intuti: modo %d ativo\n", num);
+        printf("modo %d ativo\n", num);
     }
 }

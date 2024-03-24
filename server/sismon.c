@@ -59,7 +59,8 @@ int main ()
     exit(1);
   }
   
-  check_reghist("reghist", &variavel_controlo_registo);
+  check_reghist();
+  variavel_controlo_registo =1;
 
   // criacao das threads
   thinput *threadinput[NS];

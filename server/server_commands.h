@@ -4,11 +4,7 @@
 #include "server_socket.h"
 #include "server_threads.h"
 
-#define HANDLER1 1
-#define HANDLER2 2
-
 // SISMON COMMAND ID DEFINES
-#define MODE 2
 #define TSM 3
 #define CALA 4
 #define CER 5
@@ -35,10 +31,9 @@ void mppa(serversocket servsock, thinput **threadinput, char** args);
 void mppamb(serversocket servsock, thinput **threadinput, char** args);
 
 void handle_commands(char *command, serversocket servsock, thinput **threadinput1);
-void handler1(char **args, int argc, int *handler, thinput **threadinput, serversocket servsock);
-void handler2(char **args, int argc, int *handler, thinput **threadinput, serversocket servsock);
-void set_mode(char **args, int *handler, serversocket servsock);
+void handler1(char **args, int argc, thinput **threadinput, serversocket servsock);
+void handler2(char **args, int argc, thinput **threadinput, serversocket servsock);
 
-void check_reghist(char *pname, int *vcr);
+void check_reghist();
 
 #endif
