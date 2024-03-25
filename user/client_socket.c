@@ -4,13 +4,16 @@
 #include <string.h>
 #include <stdio.h>
 
-#define INTUTI "/tmp/INTUTI"
 #define SISMON "/tmp/SISMON"
 #define REGHIST "/tmp/reghist"
 
 //this creates a socket for the program
 void create_client_socket(struct ClientSocket *soc)
 {
+  char INTUTI[50];
+  int pid;
+  pid = getpid();
+  sprintf(INTUTI, "/tmp/INTUTI%i", pid);
   strcpy(soc->sisname, SISMON);
   strcpy(soc->usrname, INTUTI);
   strcpy(soc->regname, REGHIST);
