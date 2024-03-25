@@ -19,4 +19,6 @@ time_t date_to_seconds(char *date, char *time);
 time_t timespec_to_seconds(struct timespec spec);
 struct tm *seconds_to_date(struct timespec tspec);
 
+int get_last_valid_id(reg_t *pa);
+
 #endif

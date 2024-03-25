@@ -11,12 +11,11 @@ int tmax = TMAX;
 pthread_mutex_t mutex;
 extern mqd_t mq;
 
-registo_queue dados_registo;
-
 void* thread_sen(void *threadinput) {
     
   struct Threadinputs *senbuf = (struct Threadinputs*)threadinput;
 	long double timenothefunction;
+  static registo_queue dados_registo;
 	clock_t t;
   while(1)
   {
@@ -33,13 +32,11 @@ void* thread_sen(void *threadinput) {
         printf("BELOW MINIMUM TEMPERATURE\a\n"); 
       }
       if (senbuf->id != dados_registo.id && senbuf->TEMP != dados_registo.temperatura && variavel_controlo_registo == 1)
-      {      
+      {     
         clock_gettime(CLOCK_REALTIME, &dados_registo.t);
         dados_registo.t.tv_sec = dados_registo.t.tv_sec + YEAR_CONVERT;
         dados_registo.id = senbuf->id;
         dados_registo.temperatura = senbuf->TEMP;
-
-        
         // Enviando a estrutura de dados para o cliente
         if (mq_send(mq, (const char*)&dados_registo, MAX_MSG_SIZE, 0) == -1) {
           perror("mq_send");

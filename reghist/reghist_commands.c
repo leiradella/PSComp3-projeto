@@ -272,3 +272,21 @@ struct tm * seconds_to_date(struct timespec tspec)
     time_t seconds = tspec.tv_sec; 
     return gmtime(&seconds);;
 }
+
+int get_last_valid_id(reg_t *pa)
+{
+    int i, id;
+    time_t hvalue = -1;
+
+    //go through entire mmap and find entry with the biggest timespec value, and return the id of that entry
+    for (i = 0; i < NREG; i++)
+    {
+        if(pa[i].t.tv_sec > hvalue)
+        {
+            hvalue = pa[i].t.tv_sec;
+            id = i;
+        }
+    }
+
+    return id;
+}

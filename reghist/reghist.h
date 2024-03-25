@@ -7,7 +7,7 @@
 #define MAX_MSG_SIZE sizeof(reg_t)
 #define NREG 200                            /* numero maximo de registos no ficheiro */
 #define WORDSIZE 200
-#define DADOS "HISTORICO.LOG"               /* ficheiro com registo historico */
+#define DADOS "../reghist/HISTORICO.LOG"               /* ficheiro com registo historico */
 
 typedef struct timespec timespec_t;
 

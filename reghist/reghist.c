@@ -25,17 +25,26 @@ void sighand(int signum) {
 }
 
 void escreverRegisto() {
-
-  static int i = 0;
-
-  pa[i].t = registo.t;
-  pa[i].s = registo.s;
-  pa[i].temperatura = registo.temperatura;
-  
-  i++;
-  if (i >= NREG)
+  // start i as -1 only at the beggining  so we can call the get_last_valid_id function to restore the id to the corred position
+  static int id = -1;
+  if (id == -1)
   {
-    i = 0;
+    id = get_last_valid_id(pa);
+  }
+  if (id == -1)
+  {
+    printf("Erro ao restaurar registo");
+  }
+
+  pa[id].t = registo.t;
+  pa[id].s = registo.s;
+  pa[id].temperatura = registo.temperatura;
+  printf("%d\n", id);
+  
+  id++;
+  if (id >= NREG)
+  {
+    id = 0;
   }
 }
 

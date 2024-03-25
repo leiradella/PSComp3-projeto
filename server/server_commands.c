@@ -35,34 +35,34 @@ void cts(serversocket servsock, thinput **threadinput, char** args) //see temper
 
     if(strcmp(args[1], "1") == 0)
     {
-        //mutex_lock()
+        pthread_mutex_lock(&mutex);
         snprintf(buf, WORDSIZE, "setor 1: temperatura = %d", threadinput[0]->TEMP);
-        //mutex_unlock()
+        pthread_mutex_unlock(&mutex);
         if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
         return;
     } else if(strcmp(args[1], "2") == 0)
     {
-        //mutex_lock()
+        pthread_mutex_lock(&mutex);
         snprintf(buf, WORDSIZE,"setor 2: temperatura = %d", threadinput[1]->TEMP);
-        //mutex_unlock()
+        pthread_mutex_unlock(&mutex);
         if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
         return;
     } else if(strcmp(args[1], "3") == 0)
     {
-        //mutex_lock()
+        pthread_mutex_lock(&mutex);
         snprintf(buf, WORDSIZE,"setor 3: temperatura = %d", threadinput[2]->TEMP);
-        //mutex_unlock()
+        pthread_mutex_unlock(&mutex);
         if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
         return;
     } else if(strcmp(args[1], "0") == 0)
     {
         int i;
-        //mutex_lock()
+        pthread_mutex_lock(&mutex);
         for (i=0;i<NS;i++){
             snprintf(buf, WORDSIZE,"setor %d: temperatura = %d", i+1,threadinput[i]->TEMP);
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
         }
-        //mutex_unlock()
+        pthread_mutex_unlock(&mutex);
         return;
     }
     sprintf(buf, "setor invalido");
@@ -74,34 +74,34 @@ void cps(serversocket servsock, thinput **threadinput, char** args) //see parame
     char buf[WORDSIZE];
     if(strcmp(args[1], "1") == 0)
     {
-        //mutex_lock()
+        pthread_mutex_lock(&mutex);
         snprintf(buf, WORDSIZE, "setor 1:\nestado = %c\nperiodo sensores = %d\nperiodo actuadores = %d\nperiodo ambiente = %d",threadinput[0]->tmanip,threadinput[0]->psen, threadinput[0]->pact, threadinput[0]->pamb);
-        //mutex_unlock()
+        pthread_mutex_unlock(&mutex);
         if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
         return;
     } else if(strcmp(args[1], "2") == 0)
     {
-        //mutex_lock()
+        pthread_mutex_lock(&mutex);
         snprintf(buf, WORDSIZE, "setor 2:\nestado = %c\nperiodo sensores = %d\nperiodo actuadores = %d\nperiodo ambiente = %d",threadinput[1]->tmanip,threadinput[1]->psen, threadinput[1]->pact, threadinput[1]->pamb);
-        //mutex_unlock()
+        pthread_mutex_unlock(&mutex);
         if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
         return;
     } else if(strcmp(args[1], "3") == 0)
     {
-        //mutex_lock()
+        pthread_mutex_lock(&mutex);
         snprintf(buf, WORDSIZE, "setor 3:\nestado = %c\nperiodo sensores = %d\nperiodo actuadores = %d\nperiodo ambiente = %d",threadinput[2]->tmanip,threadinput[2]->psen, threadinput[2]->pact, threadinput[2]->pamb);
-        //mutex_unlock()
+        pthread_mutex_unlock(&mutex);
         if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
         return;
     } if(strcmp(args[1], "0") == 0)
     {
         int i;
-        //mutex_lock()
+        pthread_mutex_lock(&mutex);
         for (i=0;i<NS;i++){
             snprintf(buf, WORDSIZE, "setor %d: estado = %c\n periodo sensores = %d\n periodo actuadores = %d\n periodo ambiente = %d", i+1,threadinput[i]->tmanip,threadinput[i]->psen, threadinput[i]->pact, threadinput[i]->pamb);
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
         }
-        //mutex_unlock()
+        pthread_mutex_unlock(&mutex);
         return;
     }
     sprintf(buf, "setor invalido");
@@ -565,7 +565,6 @@ void handler2(char **args, int argc, thinput **threadinput, serversocket servsoc
 void check_reghist()
 {
     char command[WORDSIZE];
-    pid_t pid;
     
     snprintf(command, WORDSIZE, "ps -C reghist > /dev/null");
 
@@ -573,12 +572,6 @@ void check_reghist()
     {
         snprintf(command, WORDSIZE, "../reghist/reghist");
         
-        //create child
-        pid = fork();
-        if (pid == 0)
-        {
-            //sacrifice the child
-            execl(command, NULL);
-        }
+        system(command);
     }
 }
