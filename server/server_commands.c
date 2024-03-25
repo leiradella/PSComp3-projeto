@@ -565,6 +565,7 @@ void handler2(char **args, int argc, thinput **threadinput, serversocket servsoc
 void check_reghist()
 {
     char command[WORDSIZE];
+    pid_t pid;
     
     snprintf(command, WORDSIZE, "ps -C reghist > /dev/null");
 
@@ -572,6 +573,11 @@ void check_reghist()
     {
         snprintf(command, WORDSIZE, "../reghist/reghist");
         
-        system(command);
+        pid = fork();
+        if (pid == 0)
+        {
+            system(command);
+            exit(0);
+        }
     }
 }

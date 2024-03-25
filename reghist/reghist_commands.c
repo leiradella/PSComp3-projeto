@@ -17,9 +17,18 @@ void trh(regsocket soc)
 void lreg(reg_t *pa, char **args, int argc, regsocket soc)
 {
     char buf[WORDSIZE];
-    int i, id1, id2;
+    int i, id1, id2, sector = -1;
     time_t tspec1, tspec2, lspec = -1, hspec =-1;
     struct tm *date;
+
+    //  get the sector
+    sector = (int)strtol(args[1], NULL, 10);
+    if (sector == 0 && errno == EINVAL)
+    {
+        snprintf(buf, WORDSIZE, "Reghist: Setor invalido");
+        if (sendto(soc.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&soc.from, soc.fromlen) < 0) perror("CLI: Erro no sendto");
+        return;
+    }
 
     tspec1 = date_to_seconds(args[2], args[3]);
 
@@ -54,23 +63,35 @@ void lreg(reg_t *pa, char **args, int argc, regsocket soc)
                 //this for goes from id1 to the bottom of mmap
                 for (id1 = id1; id1 <= NREG; id1++)
                 {
-                    date = seconds_to_date(pa[id1].t);
-                    snprintf(buf, WORDSIZE, "Timestamp: %d/%d/%d %d:%d:%d\nSetor: %d\nTemperatura: %d\n", date->tm_mday, date->tm_mon, date->tm_year, date->tm_hour, date->tm_min, date->tm_sec, pa[id1].s, pa[id1].temperatura);
-                    if (sendto(soc.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&soc.from, soc.fromlen) < 0) perror("CLI: Erro no sendto");
+                    //checks if current entry s (sector) = sector argument value or if sector = 0 (all sectors)
+                    if (pa[id1].s == sector || sector == 0)
+                    {
+                        date = seconds_to_date(pa[id1].t);
+                        snprintf(buf, WORDSIZE, "Timestamp: %d/%d/%d %d:%d:%d\nSetor: %d\nTemperatura: %d\n", date->tm_mday, date->tm_mon, date->tm_year, date->tm_hour, date->tm_min, date->tm_sec, pa[id1].s, pa[id1].temperatura);
+                        if (sendto(soc.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&soc.from, soc.fromlen) < 0) perror("CLI: Erro no sendto");
+                    }
                 }
                 for (id1 = 0; id1 <= id2; id1++)
                 {
-                    date = seconds_to_date(pa[id1].t);
-                    snprintf(buf, WORDSIZE, "Timestamp: %d/%d/%d %d:%d:%d\nSetor: %d\nTemperatura: %d\n", date->tm_mday, date->tm_mon, date->tm_year, date->tm_hour, date->tm_min, date->tm_sec, pa[id1].s, pa[id1].temperatura);
-                    if (sendto(soc.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&soc.from, soc.fromlen) < 0) perror("CLI: Erro no sendto");
+                    //checks if current entry s (sector) = sector argument value or if sector = 0 (all sectors)
+                    if (pa[id1].s == sector || sector == 0)
+                    {
+                        date = seconds_to_date(pa[id1].t);
+                        snprintf(buf, WORDSIZE, "Timestamp: %d/%d/%d %d:%d:%d\nSetor: %d\nTemperatura: %d\n", date->tm_mday, date->tm_mon, date->tm_year, date->tm_hour, date->tm_min, date->tm_sec, pa[id1].s, pa[id1].temperatura);
+                        if (sendto(soc.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&soc.from, soc.fromlen) < 0) perror("CLI: Erro no sendto");
+                    }
                 }
             } else {
                 // if id2 > id1 just list all positions between them
                 for (id1 = id1; id1 <= id2; id1++)
                 {
-                    date = seconds_to_date(pa[id1].t);
-                    snprintf(buf, WORDSIZE, "Timestamp: %d/%d/%d %d:%d:%d\nSetor: %d\nTemperatura: %d\n", date->tm_mday, date->tm_mon, date->tm_year, date->tm_hour, date->tm_min, date->tm_sec, pa[id1].s, pa[id1].temperatura);
-                    if (sendto(soc.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&soc.from, soc.fromlen) < 0) perror("CLI: Erro no sendto");
+                    //checks if current entry s (sector) = sector argument value or if sector = 0 (all sectors)
+                    if (pa[id1].s == sector || sector == 0)
+                    {
+                        date = seconds_to_date(pa[id1].t);
+                        snprintf(buf, WORDSIZE, "Timestamp: %d/%d/%d %d:%d:%d\nSetor: %d\nTemperatura: %d\n", date->tm_mday, date->tm_mon, date->tm_year, date->tm_hour, date->tm_min, date->tm_sec, pa[id1].s, pa[id1].temperatura);
+                        if (sendto(soc.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&soc.from, soc.fromlen) < 0) perror("CLI: Erro no sendto");
+                    }
                 }
             }
             break;
@@ -114,23 +135,36 @@ void lreg(reg_t *pa, char **args, int argc, regsocket soc)
                 //this for goes from id1 to the bottom of mmap
                 for (id1 = id1; id1 <= NREG; id1++)
                 {
-                    date = seconds_to_date(pa[id1].t);
-                    snprintf(buf, WORDSIZE, "Timestamp: %d/%d/%d %d:%d:%d\nSetor: %d\nTemperatura: %d\n", date->tm_mday, date->tm_mon, date->tm_year, date->tm_hour, date->tm_min, date->tm_sec, pa[id1].s, pa[id1].temperatura);
-                    if (sendto(soc.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&soc.from, soc.fromlen) < 0) perror("CLI: Erro no sendto");
+                    //checks if current entry s (sector) = sector argument value or if sector = 0 (all sectors)
+                    if (pa[id1].s == sector || sector == 0)
+                    {
+                        date = seconds_to_date(pa[id1].t);
+                        snprintf(buf, WORDSIZE, "Timestamp: %d/%d/%d %d:%d:%d\nSetor: %d\nTemperatura: %d\n", date->tm_mday, date->tm_mon, date->tm_year, date->tm_hour, date->tm_min, date->tm_sec, pa[id1].s, pa[id1].temperatura);
+                        if (sendto(soc.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&soc.from, soc.fromlen) < 0) perror("CLI: Erro no sendto");
+                    }
                 }
+                //this goes from start of mmap until id2
                 for (id1 = 0; id1 <= id2; id1++)
                 {
-                    date = seconds_to_date(pa[id1].t);
-                    snprintf(buf, WORDSIZE, "Timestamp: %d/%d/%d %d:%d:%d\nSetor: %d\nTemperatura: %d\n", date->tm_mday, date->tm_mon, date->tm_year, date->tm_hour, date->tm_min, date->tm_sec, pa[id1].s, pa[id1].temperatura);
-                    if (sendto(soc.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&soc.from, soc.fromlen) < 0) perror("CLI: Erro no sendto");
+                    //checks if current entry s (sector) = sector argument value or if sector = 0 (all sectors)
+                    if (pa[id1].s == sector || sector == 0)
+                    {
+                        date = seconds_to_date(pa[id1].t);
+                        snprintf(buf, WORDSIZE, "Timestamp: %d/%d/%d %d:%d:%d\nSetor: %d\nTemperatura: %d\n", date->tm_mday, date->tm_mon, date->tm_year, date->tm_hour, date->tm_min, date->tm_sec, pa[id1].s, pa[id1].temperatura);
+                        if (sendto(soc.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&soc.from, soc.fromlen) < 0) perror("CLI: Erro no sendto");
+                    }
                 }
             } else {
                 // if id2 > id1 just list all positions between them
                 for (id1 = id1; id1 <= id2; id1++)
                 {
-                    date = seconds_to_date(pa[id1].t);
-                    snprintf(buf, WORDSIZE, "Timestamp: %d/%d/%d %d:%d:%d\nSetor: %d\nTemperatura: %d", date->tm_mday, date->tm_mon, date->tm_year, date->tm_hour, date->tm_min, date->tm_sec, pa[id1].s, pa[id1].temperatura);
-                    if (sendto(soc.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&soc.from, soc.fromlen) < 0) perror("CLI: Erro no sendto");
+                    //checks if current entry s (sector) = sector argument value or if sector = 0 (all sectors)
+                    if (pa[id1].s == sector || sector == 0)
+                    {
+                        date = seconds_to_date(pa[id1].t);
+                        snprintf(buf, WORDSIZE, "Timestamp: %d/%d/%d %d:%d:%d\nSetor: %d\nTemperatura: %d\n", date->tm_mday, date->tm_mon, date->tm_year, date->tm_hour, date->tm_min, date->tm_sec, pa[id1].s, pa[id1].temperatura);
+                        if (sendto(soc.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&soc.from, soc.fromlen) < 0) perror("CLI: Erro no sendto");
+                    }
                 }
             }
             break;
@@ -281,11 +315,21 @@ int get_last_valid_id(reg_t *pa)
     //go through entire mmap and find entry with the biggest timespec value, and return the id of that entry
     for (i = 0; i < NREG; i++)
     {
-        if(pa[i].t.tv_sec > hvalue)
+        if(pa[i].t.tv_sec >= hvalue)
         {
             hvalue = pa[i].t.tv_sec;
             id = i;
         }
+    }
+    // if historico doesnt have any logs, then all positions will be zero and id will be stored as 199.
+    // because of this, we added a check, if by the end of going through the entire mmap hvalue is still 0, then it means
+    // the log is new, so we set id to 1.
+    if (hvalue == 0)
+    {
+        id = 0;
+    } else if (hvalue != -1) {
+        //this is just because id stores the newest entry, so we have to add one to start writing. (if hvalue = -1, then mmap is tweaking)
+        id++;
     }
 
     return id;
