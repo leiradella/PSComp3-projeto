@@ -189,9 +189,6 @@ void handler1(char *message, char *token, char *arg1, int *handler,clientsocket 
             case AAS:
                 if (sendto(clisoc.sd, message, strlen(message)+1, 0, (struct sockaddr *)&clisoc.sis, clisoc.sislen) < 0) perror("CLI: Erro no sendto");
                 break;
-            case LREG:
-                if (sendto(clisoc.sd, message, strlen(message)+1, 0, (struct sockaddr *)&clisoc.reg, clisoc.reglen) < 0) perror("CLI: Erro no sendto");
-                break;
             default:
                 printf("Intuti: comando invalido (argc = %d)\n", argc);
                 break;
@@ -206,6 +203,15 @@ void handler1(char *message, char *token, char *arg1, int *handler,clientsocket 
                 break;
             }
             break;
+        case 6: switch (id) {
+            case LREG:
+                if (sendto(clisoc.sd, message, strlen(message)+1, 0, (struct sockaddr *)&clisoc.reg, clisoc.reglen) < 0) perror("CLI: Erro no sendto");
+                break;
+            default:
+                printf("Intuti: comando invalido (argc = %d)\n", argc);
+                break;
+        }
+        break;
         default:
             printf("Intuti: comando invalido (argc = %d)\n", argc);
             break; 
@@ -283,14 +289,17 @@ void handler2(char *message, char *token, char *arg1, int *handler, clientsocket
                 if (sendto(clisoc.sd, message, strlen(message)+1, 0, (struct sockaddr *)&clisoc.sis, clisoc.sislen) < 0) perror("CLI: Erro no sendto");
                 break;
             }
-            else if (strcmp(arg1, "lreg") == 0)
+            printf("Intuti: comando invalido (argc = %d)\n", argc);
+            break;
+        case 4:
+            if (strcmp(arg1, "lreg") == 0)
             {
                 if (sendto(clisoc.sd, message, strlen(message)+1, 0, (struct sockaddr *)&clisoc.reg, clisoc.reglen) < 0) perror("CLI: Erro no sendto");
                 break;
             }
             printf("Intuti: comando invalido (argc = %d)\n", argc);
             break;
-        case 4:
+        case 6:
             if (strcmp(arg1, "lreg") == 0)
             {
                 if (sendto(clisoc.sd, message, strlen(message)+1, 0, (struct sockaddr *)&clisoc.reg, clisoc.reglen) < 0) perror("CLI: Erro no sendto");

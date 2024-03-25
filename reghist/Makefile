@@ -32,5 +32,5 @@ $(EXEC): $(OBJ)
 
 #clean
 clean:
-	rm -f $(OBJ) $(EXEC)
+	rm -f $(OBJ) $(EXEC) HISTORICO.LOG
 

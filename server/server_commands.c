@@ -190,273 +190,169 @@ void der(serversocket servsock)
 void mpps(serversocket servsock, thinput **threadinput, char** args) //set sensor period time
 {
     char buf[WORDSIZE];
-    if (strcmp(args[1], "1") == 0)
+    int arg1, arg2;
+
+    // put 1st argument into arg1 and 2nd argument into arg2
+    arg1 = (int)(strtol(args[1], NULL, 10));
+    arg2 = (int)(strtol(args[2], NULL, 10));
+
+    if (arg2 <= 0)
     {
-        char *end;
-        int num = (int)(strtol(args[2], &end, 10));
-        if (*end != '\0') {
-            snprintf(buf, WORDSIZE, "2nd argument not a number");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return;
-        }
-        if (num <= 0)
-        {
-            snprintf(buf, WORDSIZE, "period must be a positive value");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return; 
-        }
-        pthread_mutex_lock(&mutex);
-        threadinput[0]->psen = num;
-        pthread_mutex_unlock(&mutex);
-        return;
+        snprintf(buf, WORDSIZE, "period must be 1 or higher");
+        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+        return; 
     }
-    if (strcmp(args[1], "2") == 0)
-    {
-        char *end;
-        int num = (int)(strtol(args[2], &end, 10));
-        if (*end != '\0') {
-            snprintf(buf, WORDSIZE, "2nd argument not a number");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return;
-        }
-        if (num <= 0)
-        {
-            snprintf(buf, WORDSIZE, "period must be a positive value");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return; 
-        }
-        pthread_mutex_lock(&mutex);
-        threadinput[1]->psen = num;
-        pthread_mutex_unlock(&mutex);
-        return;
+
+    //arg1 determines which sectors are affected by the command
+    switch (arg1) {
+        // all sectors
+        case 0:
+            for (int i = 0; i < arg2; i++)
+            {
+                threadinput[i]->pact = arg2;
+            }
+            break;
+        case 1:
+            threadinput[0]->pact = arg2;
+            break;
+        case 2:
+            threadinput[1]->pact = arg2;
+            break;
+        case 3:
+            threadinput[2]->pact = arg2;
+            break;
+        default:
+            snprintf(buf, WORDSIZE, "Sismon: Setor invalido");
+            break;
     }
-    if (strcmp(args[1], "3") == 0)
-    {
-        char *end;
-        int num = (int)(strtol(args[2], &end, 10));
-        if (*end != '\0') {
-            snprintf(buf, WORDSIZE, "2nd argument not a number");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return;
-        }
-        if (num <= 0)
-        {
-            snprintf(buf, WORDSIZE, "period must be a positive value");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return; 
-        }
-        pthread_mutex_lock(&mutex);
-        threadinput[2]->psen = num;
-        pthread_mutex_unlock(&mutex);
-        return;
-    }
-    if (strcmp(args[1], "0") == 0)
-    {
-        char *end;
-        int i;
-        int num = (int)(strtol(args[2], &end, 10));
-        if (*end != '\0') {
-            snprintf(buf, WORDSIZE, "2nd argument not a number");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return;
-        }
-        if (num <= 0)
-        {
-            snprintf(buf, WORDSIZE, "period must me at least 1");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return; 
-        }
-        pthread_mutex_lock(&mutex);
-        for(i = 0;i<3;i++) threadinput[i]->psen = num;
-        pthread_mutex_unlock(&mutex);
-        return;
-    }
-    snprintf(buf, WORDSIZE, "1st argument invalid");
-    if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-    return; 
 }
 
 void mppa(serversocket servsock, thinput **threadinput, char** args) //set actuator period time
 {
     char buf[WORDSIZE];
-    if (strcmp(args[1], "1") == 0)
+    int arg1, arg2;
+
+    // put 1st argument into arg1 and 2nd argument into arg2
+    arg1 = (int)(strtol(args[1], NULL, 10));
+    arg2 = (int)(strtol(args[2], NULL, 10));
+
+    if (arg2 <= 0)
     {
-        char *end;
-        int num = (int)(strtol(args[2], &end, 10));
-        if (*end != '\0') {
-            snprintf(buf, WORDSIZE, "2nd argument not a number");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return;
-        }
-        if (num <= 0)
-        {
-            snprintf(buf, WORDSIZE, "period must be a positive value");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return; 
-        }
-        pthread_mutex_lock(&mutex);
-        threadinput[0]->pact = num;
-        pthread_mutex_unlock(&mutex);
-        return;
+        snprintf(buf, WORDSIZE, "Sismon: period must be 1 or higher");
+        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+        return; 
     }
-    if (strcmp(args[1], "2") == 0)
-    {
-        char *end;
-        int num = (int)(strtol(args[2], &end, 10));
-        if (*end != '\0') {
-            snprintf(buf, WORDSIZE, "2nd argument not a number");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return;
-        }
-        if (num <= 0)
-        {
-            snprintf(buf, WORDSIZE, "period must be a positive value");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return; 
-        }
-        pthread_mutex_lock(&mutex);
-        threadinput[1]->pact = num;
-        pthread_mutex_unlock(&mutex);
-        return;
+
+    //arg1 determines which sectors are affected by the command
+    switch (arg1) {
+        // all sectors
+        case 0:
+            for (int i = 0; i < arg2; i++)
+            {
+                threadinput[i]->psen = arg2;
+            }
+            break;
+        case 1:
+            threadinput[0]->psen = arg2;
+            break;
+        case 2:
+            threadinput[1]->psen = arg2;
+            break;
+        case 3:
+            threadinput[2]->psen = arg2;
+            break;
+        default:
+            snprintf(buf, WORDSIZE, "Sismon: Setor invalido");
+            break;
     }
-    if (strcmp(args[1], "3") == 0)
-    {
-        char *end;
-        int num = (int)(strtol(args[2], &end, 10));
-        if (*end != '\0') {
-            snprintf(buf, WORDSIZE, "2nd argument not a number");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return;
-        }
-        if (num <= 0)
-        {
-            snprintf(buf, WORDSIZE, "period must be a positive value");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return; 
-        }
-        pthread_mutex_lock(&mutex);
-        threadinput[2]->pact = num;
-        pthread_mutex_unlock(&mutex);
-        return;
-    }
-    if (strcmp(args[1], "0") == 0)
-    {
-        char *end;
-        int i;
-        int num = (int)(strtol(args[2], &end, 10));
-        if (*end != '\0') {
-            snprintf(buf, WORDSIZE, "2nd argument not a number");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return;
-        }
-        if (num <= 0)
-        {
-            snprintf(buf, WORDSIZE, "period must me at least 1");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return; 
-        }
-        pthread_mutex_lock(&mutex);
-        for(i=0;i<3;i++) threadinput[i]->pact = num;
-        pthread_mutex_unlock(&mutex);
-        return;
-    }
-    snprintf(buf, WORDSIZE, "1st argument invalid");
-    if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-    return; 
 }
 
 void mppamb(serversocket servsock, thinput **threadinput, char** args) //set actuator period time
 {
     char buf[WORDSIZE];
-    if (strcmp(args[1], "1") == 0)
+    int arg1, arg2;
+
+    // put 1st argument into arg1 and 2nd argument into arg2
+    arg1 = (int)(strtol(args[1], NULL, 10));
+    arg2 = (int)(strtol(args[2], NULL, 10));
+
+    if (arg2 <= 0)
     {
-        char *end;
-        int num = (int)(strtol(args[2], &end, 10));
-        if (*end != '\0') {
-            snprintf(buf, WORDSIZE, "2nd argument not a number");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return;
-        }
-        if (num <= 0)
-        {
-            snprintf(buf, WORDSIZE, "period must be a positive value");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return; 
-        }
-        pthread_mutex_lock(&mutex);
-        threadinput[0]->pamb = num;
-        pthread_mutex_unlock(&mutex);
-        return;
+        snprintf(buf, WORDSIZE, "period must be 1 or higher");
+        if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
+        return; 
     }
-    if (strcmp(args[1], "2") == 0)
-    {
-        char *end;
-        int num = (int)(strtol(args[2], &end, 10));
-        if (*end != '\0') {
-            snprintf(buf, WORDSIZE, "2nd argument not a number");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return;
-        }
-        if (num <= 0)
-        {
-            snprintf(buf, WORDSIZE, "period must be a positive value");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return; 
-        }
-        pthread_mutex_lock(&mutex);
-        threadinput[1]->pamb = num;
-        pthread_mutex_unlock(&mutex);
-        return;
+
+    //arg1 determines which sectors are affected by the command
+    switch (arg1) {
+        // all sectors
+        case 0:
+            for (int i = 0; i < arg2; i++)
+            {
+                threadinput[i]->pamb = arg2;
+            }
+            break;
+        case 1:
+            threadinput[0]->pamb = arg2;
+            break;
+        case 2:
+            threadinput[1]->pamb = arg2;
+            break;
+        case 3:
+            threadinput[2]->pamb = arg2;
+            break;
+        default:
+            snprintf(buf, WORDSIZE, "Sismon: Setor invalido");
+            break;
     }
-    if (strcmp(args[1], "3") == 0)
-    {
-        char *end;
-        int num = (int)(strtol(args[2], &end, 10));
-        if (*end != '\0') {
-            snprintf(buf, WORDSIZE, "2nd argument not a number");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return;
-        }
-        if (num <= 0)
-        {
-            snprintf(buf, WORDSIZE, "period must be a positive value");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return; 
-        }
-        pthread_mutex_lock(&mutex);
-        threadinput[2]->pamb = num;
-        pthread_mutex_unlock(&mutex);
-        return;
+}
+
+void aas(serversocket servsock, thinput **threadinput, char** args)
+{
+    char buf[WORDSIZE];
+    int arg1, arg2;
+    char arg_sign;
+
+    // put 1st argument into arg1 and 2nd argument into arg2
+    arg1 = (int)(strtol(args[1], NULL, 10));
+    arg2 = (int)(strtol(args[2], NULL, 10));
+
+    if(arg2 < 0) {
+        arg_sign = '-';
+    } else if (arg2 == 0) {
+        arg_sign = '0';
+    } else if (arg2 > 0) {
+        arg_sign = '+';
     }
-    if (strcmp(args[1], "0") == 0)
-    {
-        char *end;
-        int i;
-        int num = (int)(strtol(args[2], &end, 10));
-        if (*end != '\0') {
-            snprintf(buf, WORDSIZE, "2nd argument not a number");
+
+    //arg1 determines which sectors are affected by the command
+    switch (arg1) {
+        // all sectors
+        case 0:
+            for (int i = 0; i < arg2; i++)
+            {
+                threadinput[i]->tmanip = arg_sign;
+            }
+            break;
+        case 1:
+            threadinput[0]->tmanip = arg_sign;
+            break;
+        case 2:
+            threadinput[1]->tmanip = arg_sign;
+            break;
+        case 3:
+            threadinput[2]->tmanip = arg_sign;
+            break;
+        default:
+            snprintf(buf, WORDSIZE, "Sismon: Setor invalido");
             if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return;
-        }
-        if (num <= 0)
-        {
-            snprintf(buf, WORDSIZE, "period must me at least 1");
-            if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-            return; 
-        }
-        pthread_mutex_lock(&mutex);
-        for(i=0;i<3;i++) threadinput[i]->pamb = num;
-        pthread_mutex_unlock(&mutex);
-        return;
+            break;
     }
-    snprintf(buf, WORDSIZE, "1st argument invalid");
-    if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
-    return; 
 }
 
 void handle_commands(char *command, serversocket servsock, thinput **threadinput)
 {
-        char *token, **args;
+    char *token, **args;
     int id, argc = 0;
 
     // make space for args
@@ -555,6 +451,9 @@ void handler1(char **args, int argc, thinput **threadinput, serversocket servsoc
             break;
         case 3:
             switch (id) {
+                case AAS:
+                    aas(servsock, threadinput, args);
+                    break;
                 case DALA:
                     dala(servsock, args);
                     break;
@@ -562,10 +461,10 @@ void handler1(char **args, int argc, thinput **threadinput, serversocket servsoc
                     mpps(servsock, threadinput, args);
                     break;
                 case MPPA:
-                    mpps(servsock, threadinput, args);
+                    mppa(servsock, threadinput, args);
                     break;
                 case MPPAMB:
-                    mpps(servsock, threadinput, args);
+                    mppamb(servsock, threadinput, args);
                     break;
                 default:
                     //if every compare fails, then the command doesnt exist
@@ -679,8 +578,7 @@ void check_reghist()
         if (pid == 0)
         {
             //sacrifice the child
-            execl(command, command, NULL);
+            execl(command, NULL);
         }
     }
-    
 }

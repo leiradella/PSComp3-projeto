@@ -35,6 +35,7 @@ void* thread_sen(void *threadinput) {
       if (senbuf->id != dados_registo.id && senbuf->TEMP != dados_registo.temperatura && variavel_controlo_registo == 1)
       {      
         clock_gettime(CLOCK_REALTIME, &dados_registo.t);
+        dados_registo.t.tv_sec = dados_registo.t.tv_sec + YEAR_CONVERT;
         dados_registo.id = senbuf->id;
         dados_registo.temperatura = senbuf->TEMP;
 
@@ -82,8 +83,8 @@ void* thread_act (void *threadinput)
       pthread_mutex_unlock(&mutex);
     }
     t = clock() - t; 
-   time = ((double)t)/CLOCKS_PER_SEC;
-   sleep((unsigned int)(actbuf->pact - time));  
+    time = ((double)t)/CLOCKS_PER_SEC;
+    sleep((unsigned int)(actbuf->pact - time));  
   }
 }
 

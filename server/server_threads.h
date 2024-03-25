@@ -13,6 +13,8 @@
 #define TMAX +100 /* temperatura maxima inicial para alarme (em graus) */
 #define NCICL 12 /* numero de ciclos para alternancia ambiente */
 #define NT 3   /*numero de threads*/
+#define YEAR_CONVERT 59960822400 //sum this to timespec.tv_sec so when you use gmtime it actually gives you the correct date without having to sum 1900 years and 1 month
+
 
 extern int tmin;
 extern int tmax;

@@ -9,10 +9,14 @@
 #define TRH 16
 
 void trh(regsocket soc);
-void lreg(char *pa, reg_t registo, char **args, int argc, regsocket soc);
+void lreg(reg_t *pa, char **args, int argc, regsocket soc);
 
-void handle_commands(char *pa, reg_t registo, char* command, regsocket soc);
-void handler1(char *pa, reg_t registo, char **args, int id, int argc,regsocket soc);
-void handler2(char *pa, reg_t registo, char **args, int argc, regsocket soc);
+void handle_commands(reg_t *pa, char* command, regsocket soc);
+void handler1(reg_t *pa, char **args, int id, int argc,regsocket soc);
+void handler2(reg_t *pa, char **args, int argc, regsocket soc);
+
+time_t date_to_seconds(char *date, char *time);
+time_t timespec_to_seconds(struct timespec spec);
+struct tm *seconds_to_date(struct timespec tspec);
 
 #endif

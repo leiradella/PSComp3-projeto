@@ -8,10 +8,14 @@
 #include <sys/mman.h>
 #include <errno.h>
 #include <unistd.h>
+#include <signal.h>
 
 #define TIMEOUT_SEC 5
 
+#define SIZE sizeof(timespec_t);
+
 int sigterm_signal = 0;
+reg_t *pa;
 reg_t registo;
 
 // Signal handler function
@@ -20,24 +24,19 @@ void sighand(int signum) {
   sigterm_signal = 1;
 }
 
-void imprimirDataHora(long int segundos, long int nanosegundos) {
-  struct tm *infoTempo;
-  char buffer[WORDSIZE];
+void escreverRegisto() {
 
-  // Converter segundos para a estrutura tm
-  time_t tempo = (time_t)segundos;
-  infoTempo = localtime(&tempo);
+  static int i = 0;
 
-  // Arredondar os segundos
-  long int segundosArredondados = infoTempo->tm_sec + ((nanosegundos / 1000000) >= 500 ? 1 : 0);
-
-  // Formatar a data e hora
-  snprintf(buffer, sizeof(buffer), "Timestamp: %02d/%02d/%04d %02d:%02d:%02ld",
-      infoTempo->tm_mday, infoTempo->tm_mon + 1, infoTempo->tm_year + 1900,
-      infoTempo->tm_hour, infoTempo->tm_min, segundosArredondados);
-
-  // Imprimir a data e hora formatada
+  pa[i].t = registo.t;
+  pa[i].s = registo.s;
+  pa[i].temperatura = registo.temperatura;
   
+  i++;
+  if (i >= NREG)
+  {
+    i = 0;
+  }
 }
 
 void* recebe_dados() {
@@ -58,10 +57,8 @@ void* recebe_dados() {
         perror("mq_receive");
         pthread_exit(NULL);
       }
-
-    imprimirDataHora(registo.t.tv_sec, registo.t.tv_nsec);
-    printf("Setor: %d\n", registo.s);
-    printf("Temperatura: %d\n", registo.temperatura);
+    printf("received from sismon\n");
+    escreverRegisto();
   }
 
   mq_close(mq);
@@ -74,12 +71,14 @@ int main() {
   regsocket regsoc;
   struct timeval timeout = {TIMEOUT_SEC, 0};
   ssize_t msg_status;
-  char command[WORDSIZE], *pa;
+  char command[WORDSIZE];
   int mfd;
-
 
   //create socket
   create_reghist_socket(&regsoc);
+
+  // criacao do signal
+  signal(SIGTERM, sighand);
 
   // Set timeout option for recvfrom
   if (setsockopt(regsoc.sd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) < 0) {
@@ -102,7 +101,7 @@ int main() {
   }
 
   /* mapear ficheiro */
-  if ((pa=mmap(NULL, NREG*sizeof(reg_t), PROT_READ|PROT_WRITE, MAP_SHARED, mfd, 0)) < (char *)0) {
+  if ((pa=mmap(NULL, NREG*sizeof(reg_t), PROT_READ|PROT_WRITE, MAP_SHARED, mfd, 0)) < (reg_t *)0) {
     perror("Erro em mmap");
     exit(-1);
   }
@@ -125,7 +124,7 @@ int main() {
     } else if (msg_status < 0) {
       perror("Erro no recvfrom:");
     } else {  
-      handle_commands(pa, registo, command, regsoc);
+      handle_commands(pa, command, regsoc);
     }
   }
 
