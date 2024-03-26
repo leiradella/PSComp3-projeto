@@ -209,17 +209,17 @@ void mpps(serversocket servsock, thinput **threadinput, char** args) //set senso
         case 0:
             for (int i = 0; i < arg2; i++)
             {
-                threadinput[i]->pact = arg2;
+                threadinput[i]->psen = arg2;
             }
             break;
         case 1:
-            threadinput[0]->pact = arg2;
+            threadinput[0]->psen = arg2;
             break;
         case 2:
-            threadinput[1]->pact = arg2;
+            threadinput[1]->psen = arg2;
             break;
         case 3:
-            threadinput[2]->pact = arg2;
+            threadinput[2]->psen = arg2;
             break;
         default:
             snprintf(buf, WORDSIZE, "Sismon: Setor invalido");
@@ -249,17 +249,17 @@ void mppa(serversocket servsock, thinput **threadinput, char** args) //set actua
         case 0:
             for (int i = 0; i < arg2; i++)
             {
-                threadinput[i]->psen = arg2;
+                threadinput[i]->pact = arg2;
             }
             break;
         case 1:
-            threadinput[0]->psen = arg2;
+            threadinput[0]->pact = arg2;
             break;
         case 2:
-            threadinput[1]->psen = arg2;
+            threadinput[1]->pact = arg2;
             break;
         case 3:
-            threadinput[2]->psen = arg2;
+            threadinput[2]->pact = arg2;
             break;
         default:
             snprintf(buf, WORDSIZE, "Sismon: Setor invalido");

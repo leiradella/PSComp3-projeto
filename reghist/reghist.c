@@ -39,7 +39,6 @@ void escreverRegisto() {
   pa[id].t = registo.t;
   pa[id].s = registo.s;
   pa[id].temperatura = registo.temperatura;
-  printf("%d\n", id);
   
   id++;
   if (id >= NREG)
@@ -66,7 +65,6 @@ void* recebe_dados() {
         perror("mq_receive");
         pthread_exit(NULL);
       }
-    printf("received from sismon\n");
     escreverRegisto();
   }
 
