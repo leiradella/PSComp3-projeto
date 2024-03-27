@@ -31,12 +31,14 @@ mqd_t mq;
 int variavel_controlo_registo;
 int sigterm_signal = 0;
 
-// Signal handler function
+// Signal handler function, this enables a flag that will terminate the main loop and close everything accordingly
 void sighand(int signum) {
   printf("Received SIGTERM signal (%d). Server Exiting...\n", signum);
   sigterm_signal = 1;
 }
 
+
+//here we initialize the socket, create the sector threads, define the signal and open the queue for reghist, after that its just a loop of waiting for intuti command with recvfrom
 int main ()
 {   
   char command[WORDSIZE];
@@ -85,6 +87,8 @@ for (i = 0; i < NS; i++)
       return EXIT_FAILURE;
     }
 }
+
+//this starts every threadinput function with the initial values while giving them their sector ids, in our case NS = 3, so we have 3 threadinputs with ids 1, 2 and 3
 for(i=0; i < NS; i++)
 {
   threadinput[i]->tmanip = '+';
@@ -94,7 +98,8 @@ for(i=0; i < NS; i++)
   threadinput[i]->pamb = PAMB;
   threadinput[i]->id = i+1;
 }
-  
+
+//here we create the threads and send the correct threadinputs to them.
 for (i = 0; i < NS; i++)
 {
   if (pthread_create(&threads[i][0], NULL, thread_sen, (void*)threadinput[i]) != 0) 
@@ -115,12 +120,17 @@ for (i = 0; i < NS; i++)
     // msg_status stores recvfrom value to check if it was succesful or not
     msg_status = recvfrom(servsock.sd, command, sizeof(command), 0, (struct sockaddr *)&servsock.from, &servsock.fromlen);
     
-    //if msg_status < 0, then an error ocurred, now we check if the error is related to the timeout, we dont want sismon to keep printing timeout so we just commented it
-    if (msg_status < 0 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
+    // if msg_status < 0, then an error ocurred, now we check if the error is related to the timeout, we dont want sismon to keep printing timeout so we just commented it
+    if (msg_status < 0 && (errno == EAGAIN || errno == EWOULDBLOCK)) 
+    {
       //printf("timeout\n");
-    } else if (msg_status < 0) {
+    } 
+    else if (msg_status < 0) 
+    {
       perror("Erro no recvfrom:");
-    } else {  
+    } 
+    else 
+    {  
       handle_commands(command, servsock, threadinput);
     }
   }

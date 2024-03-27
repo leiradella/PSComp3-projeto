@@ -16,6 +16,7 @@
 
 #define MAXWORDS 50
 
+//close reghist
 void trh(regsocket soc)
 {
     char buf[WORDSIZE];
@@ -25,6 +26,7 @@ void trh(regsocket soc)
     exit(0);
 }
 
+//send logs to intuti from a certain interval of time
 void lreg(reg_t *pa, char **args, int argc, regsocket soc)
 {
     char buf[WORDSIZE];
@@ -186,6 +188,7 @@ void lreg(reg_t *pa, char **args, int argc, regsocket soc)
     }
 }
 
+//receives the commands from intuti and figures out what the user wants
 void handle_commands(reg_t *pa, char *command, regsocket soc)
 {
     char *token, **args;
@@ -232,6 +235,7 @@ void handle_commands(reg_t *pa, char *command, regsocket soc)
     free(args);
 }
 
+//this is used in case the message received has command_id
 void handler1(reg_t *pa, char **args, int id, int argc,regsocket soc)
 {
     char buf[WORDSIZE];
@@ -250,6 +254,7 @@ void handler1(reg_t *pa, char **args, int id, int argc,regsocket soc)
         
 }
 
+//this is used in case the message received has command
 void handler2(reg_t *pa, char **args, int argc, regsocket soc)
 {
     char buf[WORDSIZE];
@@ -279,6 +284,7 @@ void handler2(reg_t *pa, char **args, int argc, regsocket soc)
     }
 }
 
+//transform date from intuti command into time_t
 time_t date_to_seconds(char *date, char *time)
 {
     struct tm date_time;
@@ -312,12 +318,14 @@ time_t timespec_to_seconds(struct timespec spec)
     return spec.tv_sec;
 }
 
+// transform seconds from reghist time_t to a date to be sent to intuti
 struct tm * seconds_to_date(struct timespec tspec)
 {
     time_t seconds = tspec.tv_sec; 
     return gmtime(&seconds);;
 }
 
+//gets the last valid id from previous run of reghist and continue mmap log from that point
 int get_last_valid_id(reg_t *pa)
 {
     int i, id;
@@ -339,7 +347,7 @@ int get_last_valid_id(reg_t *pa)
     {
         id = 0;
     } else if (hvalue != -1) {
-        //this is just because id stores the newest entry, so we have to add one to start writing. (if hvalue = -1, then mmap is tweaking)
+        //this is just because id stores the newest entry, so we have to add one to start writing. (if hvalue = -1, then mmap is not working)
         id++;
     }
 

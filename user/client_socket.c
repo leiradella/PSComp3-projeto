@@ -18,11 +18,13 @@
 #define SISMON "/tmp/SISMON"
 #define REGHIST "/tmp/reghist"
 
-//this creates a socket for the program
+//this creates a socket for the user, and also stores the names of sismon and reghist sockets for communication purposes
 void create_client_socket(struct ClientSocket *soc)
 {
   char INTUTI[50];
   int pid;
+
+  //intuti
   pid = getpid();
   sprintf(INTUTI, "/tmp/INTUTI%i", pid);
   strcpy(soc->sisname, SISMON);
@@ -43,11 +45,13 @@ void create_client_socket(struct ClientSocket *soc)
     perror("Erro no bind"); exit(-1);
   }
 
+  //sismon
   soc->sis.sun_family = AF_UNIX;
   memset(soc->sis.sun_path, 0, sizeof(soc->sis.sun_path));
   strcpy(soc->sis.sun_path, soc->sisname);
   soc->sislen = (socklen_t)(sizeof(soc->sis.sun_family) + strlen(soc->sis.sun_path));
 
+  //reghist
   soc->reg.sun_family = AF_UNIX;
   memset(soc->reg.sun_path, 0, sizeof(soc->reg.sun_path));
   strcpy(soc->reg.sun_path, soc->regname);

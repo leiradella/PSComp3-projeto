@@ -26,7 +26,6 @@
 #define NT 3                     // number of threads
 #define YEAR_CONVERT 59960822400 // sum this to timespec.tv_sec so when you use gmtime it actually gives you the correct date without having to sum 1900 years and 1 month
 
-
 extern int tmin;
 extern int tmax;
 extern int variavel_controlo_registo;
@@ -35,6 +34,7 @@ extern pthread_mutex_t mutex;
 
 typedef struct timespec timespec_t;
 
+//this structure is used to store all relevant information about a sector in one place, every sector has 1 of this struct, and it is shared by the 3 threads of each sector
 typedef struct Threadinputs {
     int TEMP;
     char tmanip;
@@ -45,6 +45,7 @@ typedef struct Threadinputs {
     time_t regtime;
 } thinput;
 
+//this structure is used to send relevant information to reghist
 typedef struct {
     timespec_t t;
     int temperatura;

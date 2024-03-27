@@ -17,11 +17,8 @@
 
 #define MAXWORDS 50
 
-struct Message {
-  char *argv[MAXWORDS];
-  int argc;
-};
-
+//this stores all relevant information for socket communication purposes, communication between sismon and reghist is queue based, so sismon only has its own address
+// and the address it receives in recvfrom
 typedef struct ServerSocket {
   int sd;
   struct sockaddr_un from; //socket user

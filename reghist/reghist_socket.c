@@ -13,9 +13,9 @@
 #include <unistd.h>
 #include <stdio.h>
 
-#define INTUTI "/tmp/INTUTI"
 #define REGHIST "/tmp/reghist"
 
+//initializes reghist socket, very similar to server socket
 void create_reghist_socket(struct ReghistSocket *soc)
 {
     strcpy(soc->regname, REGHIST);

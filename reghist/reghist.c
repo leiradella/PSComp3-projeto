@@ -35,6 +35,7 @@ void sighand(int signum) {
   sigterm_signal = 1;
 }
 
+//writes in the current entry in mmap, also retrieves last mmap position in a fresh start
 void escreverRegisto() {
   // start i as -1 only at the beggining  so we can call the get_last_valid_id function to restore the id to the corred position
   static int id = -1;
@@ -58,6 +59,7 @@ void escreverRegisto() {
   }
 }
 
+//receive from sismon queue
 void* recebe_dados() {
   
   mqd_t mq;
@@ -83,6 +85,7 @@ void* recebe_dados() {
   return NULL;
 }
 
+// here we initialize the socket for intuti communication, initialize the thread for sismon queue, initialize the mmap for the queue and receive inputs from intuti
 int main() {   
   
   pthread_t recebe_dados_sismon;

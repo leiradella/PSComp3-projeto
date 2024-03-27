@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 
+// this structure is only used to store all command information for when user does "help" or "sos" command
 const struct command_d commands[] = {
   {"sos",              "                    -help"},
   {"help",             "                    -help"},
@@ -79,6 +80,7 @@ void send_command(char *command, clientsocket clisoc)
     //clean message
     strcpy(message, "");
 
+    //this will define how the user wants to send the message, they can alter the value of handler with commands "mode m" (m=1 is handler1 m=2 is handler2)
     if (handler == HANDLER1) handler1(message, token, arg1, &handler, clisoc);
     else if (handler == HANDLER2) handler2(message, token, arg1, &handler, clisoc);
 
@@ -95,7 +97,7 @@ void handler1(char *message, char *token, char *arg1, int *handler,clientsocket 
     //get the fist word (command) and put it in arg1
     strcpy(arg1, token);
 
-    // i hate myself
+    // switch case to convert command string into a command_id
     if (strcmp(arg1, "sair") == 0){
         id = SAIR;
     } else if (strcmp(arg1, "sos") == 0 || strcmp(arg1, "help") == 0) {
@@ -136,7 +138,7 @@ void handler1(char *message, char *token, char *arg1, int *handler,clientsocket 
     snprintf(message, 4, "%d", id);
     strcpy(arg1, message);
     
-    //1st cycle because of the space lol
+    //start writing the complete message in message
     token = strtok(NULL, " ");
     argc++;
 
@@ -149,6 +151,9 @@ void handler1(char *message, char *token, char *arg1, int *handler,clientsocket 
         token = strtok(NULL, " ");
     }
 
+    //we use argc to catch commands with too many or too little arguments, if intuti writes "dala 13 12 14", argc = 4, but dala is in case 3, so it gives error.
+    //same thing for "dala 19", argc = 2 and dala is in case 3, so another error
+    //this makes sure that the command has the appropriate number of arguments
     switch (argc) {
         case 1:
             switch (id) {
@@ -239,7 +244,6 @@ void handler2(char *message, char *token, char *arg1, int *handler, clientsocket
     strcpy(message, token);
     strcpy(arg1, token);
 
-    //1st cycle because of the space lol
     token = strtok(NULL, " ");
     argc++;
 
@@ -252,6 +256,9 @@ void handler2(char *message, char *token, char *arg1, int *handler, clientsocket
         token = strtok(NULL, " ");
     }
 
+    //we use argc to catch commands with too many or too little arguments, if intuti writes "dala 13 12 14", argc = 4, but dala is in case 3, so it gives error.
+    //same thing for "dala 19", argc = 2 and dala is in case 3, so another error
+    //this makes sure that the command has the appropriate number of arguments
     switch (argc) {
         case 1:
             if(strcmp(arg1, "tsm") == 0 || strcmp(arg1, "cala") == 0 || strcmp(arg1, "cer") == 0 || strcmp(arg1, "aer") == 0 || strcmp(arg1, "der") == 0)
@@ -329,17 +336,21 @@ void set_mode(char *message, int *handler)
     char *end, *token;
     int num;
 
-    token = strtok(message, " "); //get 1st word (command)
-    token = strtok(NULL, " "); //get 2nd word (value for handler)
+    //put in token the argument m (command: mode m)
+    token = strtok(message, " ");
+    token = strtok(NULL, " ");
 
+    //stores the value of the argument in an int
     num = (int)strtol(token, &end, 10);
 
+    // checks if the mode is valid
     if (num != 1 && num != 2)
     {
         printf("Intuti: Invalid mode: %d\n", num);
         return;
     }
 
+    // if mode is valid, then change handler to the right mode
     if (num == (*handler))
     {
         printf("modo %d ja esta ativo\n", num);

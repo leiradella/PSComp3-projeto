@@ -18,6 +18,7 @@
 
 #define MAXMESSAGESIZE 200
 
+//this function receives messages from reghist and sismon without locking the user from writing commands
 void *thread_func(void *clisoc)
 {
     char buf[MAXMESSAGESIZE];
@@ -32,20 +33,24 @@ void *thread_func(void *clisoc)
     }
 }
 
+//in this function we initialize the socket, start the thread that receives messages, and receive inputs from the keyboard to send to the correct entity.
 int main()
 {
     clientsocket clisoc;
     pthread_t  thread;
     char buf[MAXMESSAGESIZE];
 
+    //create socket
     create_client_socket(&clisoc);
 
+    //create thread that receives
     if (pthread_create(&thread, NULL, thread_func, (void *)&clisoc) != 0) {
        printf("Erro a criar thread\n");
     }
 
     printf("Welcome\n\n");
 
+    //reveceive user commands and send them to sismon or reghist
     while(1)
     {
         fgets(buf, MAXMESSAGESIZE, stdin);

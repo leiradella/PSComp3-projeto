@@ -15,6 +15,8 @@
 
 #define NCOMMANDS (sizeof(commands)/sizeof(struct command_d))
 
+// defines for the way the message is treated before being sent, handler1 uses ids like "command_id arg arg" (all numbers) while
+// handler2 sticks with "command arg arg", where only the args are numbers
 #define HANDLER1 1
 #define HANDLER2 2
 

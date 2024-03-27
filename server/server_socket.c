@@ -17,7 +17,8 @@
 
 #define SISMON "/tmp/SISMON"
 
-//this creates a socket for the program
+//this creates a socket for the sismon and prepares a "from" where it will store the address of the user who sent the command, this allows one sismon
+//to communicate with many intutis, since it changes the "from" address every time it receives a message.
 void sock_create(serversocket *soc)
 {
   strcpy(soc->sisname, SISMON);

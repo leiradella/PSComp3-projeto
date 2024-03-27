@@ -16,6 +16,7 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
+//this structure is used to group all relevant information about socket communication in one place. 
 typedef struct ClientSocket {
   int sd;
   struct sockaddr_un usr; //socket user

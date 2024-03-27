@@ -16,6 +16,7 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
+//groups relevant socket information in one place, very similar to server socket
 typedef struct ReghistSocket {
   int sd;
   struct sockaddr_un from; //socket user

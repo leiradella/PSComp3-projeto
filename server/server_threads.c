@@ -31,17 +31,20 @@ void* thread_sen(void *threadinput) {
   while(1)
   {
   t = clock();
+    //check if psen is valid, if 0 then thread does nothing
     if (senbuf->psen != 0)
     {
+      //check if temperature thas passed the limits
       if (senbuf->TEMP > tmax) 
       {  
-        printf("ABOVE MAX TEMPERATURE\a\n"); 
+        printf("ABOVE MAX TEMPERATURE\n"); 
       }
 
       if (senbuf->TEMP < tmin) 
       {
-        printf("BELOW MINIMUM TEMPERATURE\a\n"); 
+        printf("BELOW MINIMUM TEMPERATURE\n"); 
       }
+      // checks if there is a new log to be sent, if this thread runs twice and there is no new log to be sent, it does not get sent
       if (senbuf->id != dados_registo.id && senbuf->TEMP != dados_registo.temperatura && variavel_controlo_registo == 1)
       {     
         clock_gettime(CLOCK_REALTIME, &dados_registo.t);
@@ -55,6 +58,7 @@ void* thread_sen(void *threadinput) {
           exit(1);
         }
       } 
+      //here we calculate the time of execution and sleep accordingly to make sure the average period of thread right
       t = clock() - t; 
       timenothefunction = ((double)t)/CLOCKS_PER_SEC;
       sleep((unsigned int)(senbuf->psen - timenothefunction));
@@ -72,9 +76,10 @@ void* thread_act (void *threadinput)
   while(1)
   {
   t = clock();
+    //chec if it has valid period
     if (actbuf->pact != 0)
     {
-     
+      //checks value of tmanip, which determines if actuators raise, decrease or dont do anything to temperature
       if (actbuf->tmanip == '+')
       {
         tact = 1;  
@@ -87,10 +92,12 @@ void* thread_act (void *threadinput)
       {
         tact = 0;  
       }
+      //use mutex because temp can be read by server_commands
       pthread_mutex_lock(&mutex);
       actbuf->TEMP += tact; 
       pthread_mutex_unlock(&mutex);
     }
+    //here we calculate the time of execution and sleep accordingly to make sure the average period of thread right
     t = clock() - t; 
     time = ((double)t)/CLOCKS_PER_SEC;
     sleep((unsigned int)(actbuf->pact - time));  
@@ -109,9 +116,10 @@ void* thread_amb (void *threadinput)
   while (1)
   {
   t = clock();
+    //check for valid period
     if (ambbuf->pamb != 0)
     {
-   
+      //use rand to determine tvaramb
       tvaramb = rand() % 3 -1;
 
       if (ambcycle/NCICL == 0)
@@ -120,7 +128,6 @@ void* thread_amb (void *threadinput)
       }
       else 
       {
-      
         tfixamb = -1;
       
         if (ambcycle == 2*NCICL)
@@ -129,11 +136,13 @@ void* thread_amb (void *threadinput)
         tfixamb = 1;
         }   
       }
+      //lock because temp can be read by server_commands
       pthread_mutex_lock(&mutex);
       ambbuf->TEMP += tfixamb + tvaramb;
       pthread_mutex_unlock(&mutex);
       ambcycle++;
     }
+    //here we calculate the time of execution and sleep accordingly to make sure the average period of thread right
     t = clock() - t; 
    time = ((double)t)/CLOCKS_PER_SEC;
    sleep((unsigned int)(ambbuf->pamb - time));  

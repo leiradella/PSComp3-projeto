@@ -22,6 +22,7 @@
 
 typedef struct timespec timespec_t;
 
+//struct used to receive from sismon queue. it is identical to the one that sismon sends
 typedef struct {
     timespec_t t;
     int temperatura;

@@ -23,6 +23,7 @@
 
 extern int variavel_controlo_registo;
 
+//close sismon
 void tsm(serversocket servsock) //server exit
 {
     char buf[WORDSIZE];
@@ -32,7 +33,8 @@ void tsm(serversocket servsock) //server exit
     return;
 }
 
-void cala(serversocket servsock) //see min and max temperatures for alarm
+//consult minimum and maximum temperature for alarm 
+void cala(serversocket servsock)
 {
     char buf[WORDSIZE];
 
@@ -40,6 +42,7 @@ void cala(serversocket servsock) //see min and max temperatures for alarm
     if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
 }
 
+//consult current sector temperature
 void cts(serversocket servsock, thinput **threadinput, char** args) //see temperature of sector
 {
     char buf[WORDSIZE];
@@ -80,6 +83,7 @@ void cts(serversocket servsock, thinput **threadinput, char** args) //see temper
     if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
 }
 
+//consult sector properties (state and periods)
 void cps(serversocket servsock, thinput **threadinput, char** args) //see parameters of sector
 {
     char buf[WORDSIZE];
@@ -119,7 +123,8 @@ void cps(serversocket servsock, thinput **threadinput, char** args) //see parame
     if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
 }
 
-void dala(serversocket servsock, char** args) //change min and max temp for alarm
+// define minimum and maximum temperatures for alarm
+void dala(serversocket servsock, char** args)
 {
     char buf[WORDSIZE];
     if (args[1] == NULL || args[2] == NULL)
@@ -153,6 +158,7 @@ void dala(serversocket servsock, char** args) //change min and max temp for alar
     pthread_mutex_unlock(&mutex);
 }
 
+// check if sismon is sending information to reghist
 void cer (serversocket servsock)
 {
     char buf[WORDSIZE];
@@ -168,6 +174,7 @@ void cer (serversocket servsock)
     }  
 }
 
+// enable information to be sent to reghist
 void aer(serversocket servsock)
 {
     char buf[WORDSIZE];
@@ -183,6 +190,7 @@ void aer(serversocket servsock)
     }
 }
 
+// disable information to be sent to reghist
 void der(serversocket servsock)
 {
     char buf[WORDSIZE];
@@ -198,6 +206,7 @@ void der(serversocket servsock)
     }
 }
 
+//define sensor period of a sector
 void mpps(serversocket servsock, thinput **threadinput, char** args) //set sensor period time
 {
     char buf[WORDSIZE];
@@ -207,9 +216,9 @@ void mpps(serversocket servsock, thinput **threadinput, char** args) //set senso
     arg1 = (int)(strtol(args[1], NULL, 10));
     arg2 = (int)(strtol(args[2], NULL, 10));
 
-    if (arg2 <= 0)
+    if (arg2 < 0)
     {
-        snprintf(buf, WORDSIZE, "period must be 1 or higher");
+        snprintf(buf, WORDSIZE, "period must be 0 or higher");
         if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
         return; 
     }
@@ -238,6 +247,7 @@ void mpps(serversocket servsock, thinput **threadinput, char** args) //set senso
     }
 }
 
+// define actore period of sector
 void mppa(serversocket servsock, thinput **threadinput, char** args) //set actuator period time
 {
     char buf[WORDSIZE];
@@ -247,9 +257,9 @@ void mppa(serversocket servsock, thinput **threadinput, char** args) //set actua
     arg1 = (int)(strtol(args[1], NULL, 10));
     arg2 = (int)(strtol(args[2], NULL, 10));
 
-    if (arg2 <= 0)
+    if (arg2 < 0)
     {
-        snprintf(buf, WORDSIZE, "Sismon: period must be 1 or higher");
+        snprintf(buf, WORDSIZE, "Sismon: period must be 0 or higher");
         if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
         return; 
     }
@@ -278,6 +288,7 @@ void mppa(serversocket servsock, thinput **threadinput, char** args) //set actua
     }
 }
 
+// define ambient period of a sector
 void mppamb(serversocket servsock, thinput **threadinput, char** args) //set actuator period time
 {
     char buf[WORDSIZE];
@@ -287,9 +298,9 @@ void mppamb(serversocket servsock, thinput **threadinput, char** args) //set act
     arg1 = (int)(strtol(args[1], NULL, 10));
     arg2 = (int)(strtol(args[2], NULL, 10));
 
-    if (arg2 <= 0)
+    if (arg2 < 0)
     {
-        snprintf(buf, WORDSIZE, "period must be 1 or higher");
+        snprintf(buf, WORDSIZE, "period must be 0 or higher");
         if (sendto(servsock.sd, buf, strlen(buf)+1, 0, (struct sockaddr *)&servsock.from, servsock.fromlen) < 0) perror("SERV: Erro no sendto");
         return; 
     }
@@ -318,6 +329,7 @@ void mppamb(serversocket servsock, thinput **threadinput, char** args) //set act
     }
 }
 
+// define actuator temperature change
 void aas(serversocket servsock, thinput **threadinput, char** args)
 {
     char buf[WORDSIZE];
@@ -361,6 +373,7 @@ void aas(serversocket servsock, thinput **threadinput, char** args)
     }
 }
 
+//receives commands and figures out what intuti wants
 void handle_commands(char *command, serversocket servsock, thinput **threadinput)
 {
     char *token, **args;
@@ -407,6 +420,7 @@ void handle_commands(char *command, serversocket servsock, thinput **threadinput
     free(args);
 }
 
+//this is used in case intuti sent a message with command_id
 void handler1(char **args, int argc, thinput **threadinput, serversocket servsock)
 {
     int id, i;
@@ -490,6 +504,7 @@ void handler1(char **args, int argc, thinput **threadinput, serversocket servsoc
     }
 }
 
+//this is used in case intuti sent a message with command
 void handler2(char **args, int argc, thinput **threadinput, serversocket servsock)
 {
     int i;
