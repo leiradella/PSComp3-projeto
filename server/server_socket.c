@@ -1,3 +1,14 @@
+/***************************************************************************
+| File:   server_socket.c
+|
+| Group:  4
+|
+| Autors: Miguel Fernades  103024
+|         Gonçalo Antunes  103524
+|         Lucas Leiradella 103566
+|
+| Data:  Mar 2024
+***************************************************************************/
 #include "server_socket.h"
 #include "sys/socket.h"
 #include <unistd.h>

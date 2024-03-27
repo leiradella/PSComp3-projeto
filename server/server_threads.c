@@ -1,3 +1,14 @@
+/***************************************************************************
+| File:   server_threads.c
+|
+| Group:  4
+|
+| Autors: Miguel Fernades  103024
+|         Gonçalo Antunes  103524
+|         Lucas Leiradella 103566
+|
+| Data:  Mar 2024
+***************************************************************************/
 #include "server_threads.h"
 #include <unistd.h>
 #include <stdlib.h>
@@ -37,7 +48,8 @@ void* thread_sen(void *threadinput) {
         dados_registo.t.tv_sec = dados_registo.t.tv_sec + YEAR_CONVERT;
         dados_registo.id = senbuf->id;
         dados_registo.temperatura = senbuf->TEMP;
-        // Enviando a estrutura de dados para o cliente
+
+        // Send struct to reghist
         if (mq_send(mq, (const char*)&dados_registo, MAX_MSG_SIZE, 0) == -1) {
           perror("mq_send");
           exit(1);

@@ -1,19 +1,30 @@
+/***************************************************************************
+| File:   server_threads.h
+|
+| Group:  4
+|
+| Autors: Miguel Fernades  103024
+|         Gonçalo Antunes  103524
+|         Lucas Leiradella 103566
+|
+| Data:  Mar 2024
+***************************************************************************/
 #ifndef SISMON_H_
 #define SISMON_H_
 
 #include <pthread.h>
 #include <mqueue.h>
 
-#define NS 3 /* numero de sectores a controlar */
-#define PSEN 5 /* perıodo inicial dos processos sensores (em segundos) */
-#define PACT 8 /* perıodo inicial dos processos actuadores (segundos) */
-#define PAMB 10 /* perıodo inicial dos processos ambiente (em segundos) */
-#define TINI 25 /* temperatura inicial dos sectores (em graus) */
-#define TMIN -100 /* temperatura minima inicial para alarme (em graus) */
-#define TMAX +100 /* temperatura maxima inicial para alarme (em graus) */
-#define NCICL 12 /* numero de ciclos para alternancia ambiente */
-#define NT 3   /*numero de threads*/
-#define YEAR_CONVERT 59960822400 //sum this to timespec.tv_sec so when you use gmtime it actually gives you the correct date without having to sum 1900 years and 1 month
+#define NS 3                     // number of sectors to control
+#define PSEN 5                   // initial period of sensor processes (seconds)
+#define PACT 8                   // initial period of actuating processes (seconds) 
+#define PAMB 10                  // initial period of ambient processes (seconds) 
+#define TINI 25                  // initial temperature of the sectors (in degrees)
+#define TMIN -100                // minimum initial temperature for alarm (in degrees) 
+#define TMAX +100                // maximum initial temperature for alarm (in degrees) 
+#define NCICL 12                 // number of cycles for ambient alternation
+#define NT 3                     // number of threads
+#define YEAR_CONVERT 59960822400 // sum this to timespec.tv_sec so when you use gmtime it actually gives you the correct date without having to sum 1900 years and 1 month
 
 
 extern int tmin;

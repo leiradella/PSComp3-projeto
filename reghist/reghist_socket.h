@@ -1,3 +1,14 @@
+/***************************************************************************
+| File:   reghist_socket.h
+|
+| Group:  4
+|
+| Autors: Miguel Fernades  103024
+|         Gonçalo Antunes  103524
+|         Lucas Leiradella 103566
+|
+| Data:  Mar 2024
+***************************************************************************/
 #ifndef REGHIST_SOCKET_H
 #define REGHIST_SOCKET_H
 

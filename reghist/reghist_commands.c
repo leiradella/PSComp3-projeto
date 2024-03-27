@@ -1,3 +1,14 @@
+/***************************************************************************
+| File:   reghist_commands.c
+|
+| Group:  4
+|
+| Autors: Miguel Fernades  103024
+|         Gonçalo Antunes  103524
+|         Lucas Leiradella 103566
+|
+| Data:  Mar 2024
+***************************************************************************/
 #include "reghist_commands.h"
 #include "reghist.h"
 #include <errno.h>

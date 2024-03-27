@@ -1,3 +1,14 @@
+/***************************************************************************
+| File:   reghist_commands.h
+|
+| Group:  4
+|
+| Autors: Miguel Fernades  103024
+|         Gonçalo Antunes  103524
+|         Lucas Leiradella 103566
+|
+| Data:  Mar 2024
+***************************************************************************/
 #ifndef REGHIST_COMMANDS_H
 #define REGHIST_COMMANDS_H
 

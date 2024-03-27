@@ -1,3 +1,14 @@
+/***************************************************************************
+| File:   reghist.c
+|
+| Group:  4
+|
+| Autors: Miguel Fernades  103024
+|         Gonçalo Antunes  103524
+|         Lucas Leiradella 103566
+|
+| Data:  Mar 2024
+***************************************************************************/
 #include "reghist.h"
 #include "reghist_socket.h"
 #include "reghist_commands.h"
@@ -60,7 +71,7 @@ void* recebe_dados() {
 
   while (!sigterm_signal)
   {
-    // Recebendo a estrutura de dados do servidor
+    // Receive struct from sismon
     if (mq_receive(mq, (char*)&registo, MAX_MSG_SIZE + 1, NULL) == -1) {
         perror("mq_receive");
         pthread_exit(NULL);
@@ -81,10 +92,10 @@ int main() {
   char command[WORDSIZE];
   int mfd;
 
-  //create socket
+  //Create socket
   create_reghist_socket(&regsoc);
 
-  // criacao do signal
+  //Create signal
   signal(SIGTERM, sighand);
 
   // Set timeout option for recvfrom
@@ -96,18 +107,17 @@ int main() {
   // Create Mmap
   if ((mfd = open(DADOS, O_RDWR | O_CREAT, 0666)) < 0)
   { 
-    /* abrir / criar ficheiro */
     perror("Erro a criar ficheiro");
     exit(-1);
   }
+  //Set Mmap size
   if (ftruncate(mfd, NREG*sizeof(reg_t)) < 0)
   { 
-    /* definir tamanho do ficheiro */
     perror("Erro no ftruncate");
     exit(-1);
   }
 
-  /* mapear ficheiro */
+  //Map the file
   if ((pa=mmap(NULL, NREG*sizeof(reg_t), PROT_READ|PROT_WRITE, MAP_SHARED, mfd, 0)) < (reg_t *)0) {
     perror("Erro em mmap");
     exit(-1);

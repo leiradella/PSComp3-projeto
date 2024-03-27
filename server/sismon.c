@@ -1,3 +1,14 @@
+/***************************************************************************
+| File:   sismon.c
+|
+| Group:  4
+|
+| Autors: Miguel Fernades  103024
+|         Gonçalo Antunes  103524
+|         Lucas Leiradella 103566
+|
+| Data:  Mar 2024
+***************************************************************************/
 #include "server_commands.h"
 #include "server_socket.h"
 #include "server_threads.h"

@@ -1,3 +1,14 @@
+/***************************************************************************
+| File:   server_commands.h
+|
+| Group:  4
+|
+| Autors: Miguel Fernades  103024
+|         Gonçalo Antunes  103524
+|         Lucas Leiradella 103566
+|
+| Data:  Mar 2024
+***************************************************************************/
 #ifndef SERVER_COMMANDS_H_
 #define SERVER_COMMANDS_H_
 
